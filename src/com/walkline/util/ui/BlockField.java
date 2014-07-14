@@ -1,7 +1,5 @@
 package com.walkline.util.ui;
 
-import com.walkline.util.Function;
-
 import net.rim.device.api.system.Display;
 import net.rim.device.api.ui.Color;
 import net.rim.device.api.ui.Field;
@@ -9,7 +7,6 @@ import net.rim.device.api.ui.Font;
 import net.rim.device.api.ui.FontFamily;
 import net.rim.device.api.ui.Graphics;
 import net.rim.device.api.ui.Ui;
-import net.rim.device.api.ui.UiApplication;
 
 public class BlockField extends Field
 {
@@ -27,13 +24,19 @@ public class BlockField extends Field
 		super(NON_FOCUSABLE);
 
 		try {
+			int fontSize = 7;
 			FontFamily family = FontFamily.forName("Tahoma");
-			_font = family.getFont(Font.EXTRA_BOLD, 8, Ui.UNITS_pt);
+
+			if (Display.getWidth() > Display.getHeight())
+			{
+				if (Display.getWidth() > 480) {fontSize = 9;}	
+			} else {
+				if (Display.getHeight() >= 480) {fontSize = 9;}
+			}
+
+			_font = family.getFont(Font.EXTRA_BOLD, fontSize, Ui.UNITS_pt);
 		} catch (ClassNotFoundException e) {}
 
-		//int totalSize = Math.min(Display.getWidth(), Display.getHeight()) - 20 - 32;
-
-		//_size = (totalSize - 50) / 4;
 		_value = 0;
 		_background_color = Color.GRAY;
 		_fore_color = Color.WHITE;
@@ -72,16 +75,16 @@ public class BlockField extends Field
 			case 32:
 				_background_color = 0xf67c5f;
 				break;
-			case 64: // not modified
-				_background_color = 0xf95e32; 
+			case 64:
+				_background_color = 0xf65e3b;
 				break;
 			case 128:
-				_background_color = 0xefcf6c;
+				_background_color = 0xedcf72;
 				break;
 			case 256: 
-				_background_color = 0xefcf63;
+				_background_color = 0xedcc61;
 				break;
-			case 512:
+			case 512: //not modified
 				_background_color = 0xefcb52;
 				break;
 			case 1024:

@@ -14,19 +14,13 @@ public class BlockFieldManager extends Manager
 
 	public BlockFieldManager(long style)
 	{
-		super(NON_FOCUSABLE | NO_VERTICAL_SCROLL | NO_HORIZONTAL_SCROLL | style);
+		super(NON_FOCUSABLE | USE_ALL_WIDTH | NO_VERTICAL_SCROLL | NO_HORIZONTAL_SCROLL | style);
 		setPadding(PADDING, PADDING, PADDING, PADDING);
 	}
 
-	public int getPreferredWidth()
-	{
-		return Math.min(Display.getWidth(), Display.getHeight());
-	}
+	public int getPreferredWidth() {return Math.min(Display.getWidth(), Display.getHeight());}
 
-	public int getPreferredHeight()
-	{
-		return Math.min(Display.getWidth(), Display.getHeight());
-	}
+	public int getPreferredHeight() {return Math.min(Display.getWidth(), Display.getHeight());}
 
 	protected void sublayout(int width, int height)
 	{
