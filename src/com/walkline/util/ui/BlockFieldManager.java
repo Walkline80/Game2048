@@ -18,6 +18,20 @@ public class BlockFieldManager extends Manager
 		setPadding(PADDING, PADDING, PADDING, PADDING);
 	}
 
+	public int DisplayCount()
+	{
+		int count = 0;
+
+		for (int i=0; i<16; i++)
+		{
+			BlockField block = (BlockField) getField(i);
+
+			if (block.getValue() > 0) {count += 1;}
+		}
+
+		return count;
+	}
+
 	public int getPreferredWidth() {return Math.min(Display.getWidth(), Display.getHeight());}
 
 	public int getPreferredHeight() {return Math.min(Display.getWidth(), Display.getHeight());}

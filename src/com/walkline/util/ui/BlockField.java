@@ -42,6 +42,8 @@ public class BlockField extends Field
 		_fore_color = Color.WHITE;
 	}
 
+	public void clear() {setValue(0);}
+
 	public int getValue() {return _value;}
 
 	public void setValue(int value)
@@ -79,19 +81,19 @@ public class BlockField extends Field
 				_background_color = 0xf65e3b;
 				break;
 			case 128:
-				_background_color = 0xedcf72;
+				_background_color = 0xffedcf72;
 				break;
 			case 256: 
-				_background_color = 0xedcc61;
+				_background_color = 0xffedcc61;
 				break;
-			case 512: //not modified
-				_background_color = 0xefcb52;
+			case 512:
+				_background_color = 0xffedc850;
 				break;
 			case 1024:
-				_background_color = 0xefc739;
+				_background_color = 0xffedc53f;
 				break;
 			case 2048:
-				_background_color = 0xefc329;
+				_background_color = 0xffedc22e;
 				break;
 			case 4096:
 				_background_color = 0xff3c39;
