@@ -1,23 +1,26 @@
 package com.walkline.util.ui;
 
 import net.rim.device.api.system.Display;
-import net.rim.device.api.ui.Color;
 import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.Font;
 import net.rim.device.api.ui.FontFamily;
 import net.rim.device.api.ui.Graphics;
 import net.rim.device.api.ui.Ui;
+import net.rim.device.api.ui.UiApplication;
+
+import com.walkline.util.Function;
 
 public class BlockField extends Field
 {
-	private static Font _font; // = Font.getDefault().derive(Font.PLAIN, 30, Ui.UNITS_px);
+	private static Font _font;
 	private static final int CORNER_RADIUS = 12;
 
+	private Object LOCK = new Object();
 	private int _value = 0;
 	private int _fore_color = 0;
 	private int _background_color = 0;
 	private String _text = "";
-	private int _size = 0;
+	private int _animation_size = 0;
 
 	public BlockField()
 	{
@@ -36,10 +39,6 @@ public class BlockField extends Field
 
 			_font = family.getFont(Font.EXTRA_BOLD, fontSize, Ui.UNITS_pt);
 		} catch (ClassNotFoundException e) {}
-
-		_value = 0;
-		_background_color = Color.GRAY;
-		_fore_color = Color.WHITE;
 	}
 
 	public void clear() {setValue(0);}
@@ -101,11 +100,35 @@ public class BlockField extends Field
 		}
 	}
 
-	//public int getPreferredWidth() {return _size;}
+	public synchronized void startRun()
+	{
+		new Thread()
+		{
+			public void run()
+			{
+				while (_animation_size < getWidth());
+				{
+					synchronized (UiApplication.getEventLock())
+					{
+						invalidate();	
+					}
 
-	//public int getPreferredHeight() {return _size;}
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {new Exception("thread exception: " + e.toString());}
 
-	protected void layout(int width, int height) {setExtent(width, height);}
+					_animation_size += 10;
+					if (_animation_size > getWidth()) {_animation_size = getWidth();}
+				}
+			}
+		}.start();
+	}
+
+	protected void layout(int width, int height)
+	{
+		_animation_size = width / 2;
+		setExtent(width, height);
+	}
 
 	protected void paint(Graphics g)
 	{
@@ -117,11 +140,8 @@ public class BlockField extends Field
 	protected void paintBackground(Graphics g)
 	{
 		g.setColor(_background_color);
+		g.fillRoundRect((getWidth() - _animation_size) / 2, (getHeight() - _animation_size) / 2, _animation_size, _animation_size, CORNER_RADIUS, CORNER_RADIUS);
 
-		for (int i=0; i<getWidth(); i++)
-		{
-			g.drawRect(0, 0, i, i);
-		}
 		//g.fillRoundRect(0, 0, getWidth(), getHeight(), CORNER_RADIUS, CORNER_RADIUS);
 	}
 }

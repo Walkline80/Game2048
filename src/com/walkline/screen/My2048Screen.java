@@ -100,7 +100,8 @@ public class My2048Screen extends MainScreen
 				}
 
 				found = true;
-				_mainFrame.invalidate();
+				_block[x][y].startRun();
+				//_mainFrame.invalidate();
 			}
 		}
 	}
