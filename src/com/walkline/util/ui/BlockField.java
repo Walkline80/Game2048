@@ -117,6 +117,11 @@ public class BlockField extends Field
 	protected void paintBackground(Graphics g)
 	{
 		g.setColor(_background_color);
-		g.fillRoundRect(0, 0, getWidth(), getHeight(), CORNER_RADIUS, CORNER_RADIUS);
+
+		for (int i=0; i<getWidth(); i++)
+		{
+			g.drawRect(0, 0, i, i);
+		}
+		//g.fillRoundRect(0, 0, getWidth(), getHeight(), CORNER_RADIUS, CORNER_RADIUS);
 	}
 }

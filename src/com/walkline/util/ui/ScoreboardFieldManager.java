@@ -1,10 +1,7 @@
 package com.walkline.util.ui;
 
-import com.walkline.util.Function;
-
 import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.Manager;
-import net.rim.device.api.ui.UiApplication;
 
 public class ScoreboardFieldManager extends Manager
 {
@@ -25,6 +22,23 @@ public class ScoreboardFieldManager extends Manager
 		} else if (sytle == Field.FIELD_HCENTER) {
 			setPadding(10, 10, 0, 10);
 		}
+	}
+
+	public void clear()
+	{
+		_score.clear();
+		//_best.clear();
+
+		invalidate();
+	}
+
+	public void update(int value)
+	{
+		_score.update(value);
+
+		if (_score.getScore() > _best.getScore()) {_best.setScore(_score.getScore());}
+
+		invalidate();
 	}
 
 	protected void sublayout(int width, int height)

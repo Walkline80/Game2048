@@ -8,7 +8,7 @@ import net.rim.device.api.ui.Ui;
 
 public class BestScoreboardField extends Field
 {
-	int value = 25870;
+	int _value = 0;
 	private static final String BEST = "BEST";
 	private static final int TITLE_COLOR = 0xe5dacf;
 	private static final int SCORE_COLOR = 0xffffff;
@@ -27,6 +27,12 @@ public class BestScoreboardField extends Field
 		} catch (ClassNotFoundException e) {}
 	}
 
+	public void clear() {_value = 0;}
+
+	public void setScore(int value) {_value = value;}
+
+	public int getScore() {return _value;}
+
 	public int getPreferredWidth() {return _score_font.getAdvance("00000") + 20;}
 
 	public int getPreferredHeight() {return _title_font.getHeight() + _score_font.getHeight() + 30;}
@@ -41,7 +47,7 @@ public class BestScoreboardField extends Field
 
 		g.setColor(SCORE_COLOR);
 		g.setFont(_score_font);
-		g.drawText(String.valueOf(value), (getWidth() - _score_font.getAdvance(String.valueOf(value))) / 2, (getHeight() - _title_font.getHeight()) / 2 + 10);
+		g.drawText(String.valueOf(_value), (getWidth() - _score_font.getAdvance(String.valueOf(_value))) / 2, (getHeight() - _title_font.getHeight()) / 2 + 10);
 	}
 
 	protected void paintBackground(Graphics g)

@@ -11,7 +11,6 @@ import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.container.HorizontalFieldManager;
 import net.rim.device.api.ui.container.MainScreen;
 import net.rim.device.api.ui.container.VerticalFieldManager;
-import net.rim.device.api.util.MathUtilities;
 
 import com.walkline.util.Function;
 import com.walkline.util.ui.BlockField;
@@ -24,7 +23,6 @@ public class My2048Screen extends MainScreen
 	private boolean IS_WIDTH_SCREEN = Display.getWidth() > Display.getHeight() ? true : false;
 
 	private ForegroundManager _foreground = new ForegroundManager(0);
-	private int[][] _data = new int[4][4];
 	private BlockField[][] _block = new BlockField[4][4];
 	private BlockFieldManager _mainFrame;
 	private ScoreboardFieldManager _scoreBoard;
@@ -71,6 +69,8 @@ public class My2048Screen extends MainScreen
 
     private void initGame()
     {
+    	_scoreBoard.clear();
+
     	for (int x=0; x<4; x++)
     	{
     		for (int y=0; y<4; y++) {_block[x][y].clear();}
@@ -81,23 +81,31 @@ public class My2048Screen extends MainScreen
 
 	private void appendBlock()
 	{
-		int x = new Random(System.currentTimeMillis() * System.currentTimeMillis()).nextInt(4);
-		int y = new Random(System.currentTimeMillis() * System.currentTimeMillis()).nextInt(4);
+		int x = 0;
+		int y = 0;
+		boolean found = false;
 
-		if (_block[x][y].getValue() == 0)
+		while (!found)
 		{
-			if (new Random(System.currentTimeMillis() * System.currentTimeMillis()).nextFloat() < 0.5)
-			{
-				_block[x][y].setValue(2);
-			} else {
-				_block[x][y].setValue(4);
-			}
+			x = new Random(System.currentTimeMillis() * System.currentTimeMillis()).nextInt(4);
+			y = new Random(System.currentTimeMillis() * System.currentTimeMillis()).nextInt(4);
 
-			_mainFrame.invalidate();
-		} else {
-			if (_mainFrame.DisplayCount() < 16) {appendBlock();}
+			if (_block[x][y].getValue() == 0)
+			{
+				if (new Random(System.currentTimeMillis() * System.currentTimeMillis()).nextFloat() > 0.3)
+				{
+					_block[x][y].setValue(2);
+				} else {
+					_block[x][y].setValue(4);
+				}
+
+				found = true;
+				_mainFrame.invalidate();
+			}
 		}
 	}
+
+	private void updateScore(int value) {_scoreBoard.update(value);}
 
 	private void moveBlockUp()
 	{
@@ -125,7 +133,7 @@ public class My2048Screen extends MainScreen
 							_block[x][y].setValue(_block[x][y].getValue() * 2);
 							_block[x1][y].setValue(0);
 
-							//MainActivity.getMainActivity().addScore(_block[x][y].getValue());
+							updateScore(_block[x][y].getValue());
 							merge = true;
 						}
 
@@ -137,7 +145,7 @@ public class My2048Screen extends MainScreen
 
 		if (merge) {
 			appendBlock();
-			//checkComplete();
+			checkComplete();
 		}
 
 		_mainFrame.invalidate();
@@ -168,8 +176,8 @@ public class My2048Screen extends MainScreen
 							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x1][y], _block[x][y],x1, x, y, y);
 							_block[x][y].setValue(_block[x][y].getValue() * 2);
 							_block[x1][y].setValue(0);
-							//MainActivity.getMainActivity().addScore(_block[x][y].getValue());
 
+							updateScore(_block[x][y].getValue());
 							merge = true;
 						}
 
@@ -181,7 +189,7 @@ public class My2048Screen extends MainScreen
 
 		if (merge) {
 			appendBlock();
-			//checkComplete();
+			checkComplete();
 		}
 
 		_mainFrame.invalidate();
@@ -211,7 +219,8 @@ public class My2048Screen extends MainScreen
 							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x][y1],_block[x][y], x, x, y1, y);
 							_block[x][y].setValue(_block[x][y].getValue() * 2);
 							_block[x][y1].setValue(0);
-							//MainActivity.getMainActivity().addScore(_block[x][y].getValue());
+
+							updateScore(_block[x][y].getValue());
 							merge = true;
 						}
 
@@ -223,7 +232,7 @@ public class My2048Screen extends MainScreen
 
 		if (merge) {
 			appendBlock();
-			//checkComplete();
+			checkComplete();
 		}
 
 		_mainFrame.invalidate();
@@ -254,7 +263,8 @@ public class My2048Screen extends MainScreen
 							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x][y1],_block[x][y], x, x, y1, y);
 							_block[x][y].setValue(_block[x][y].getValue() * 2);
 							_block[x][y1].setValue(0);
-							//MainActivity.getMainActivity().addScore(_block[x][y].getValue());
+
+							updateScore(_block[x][y].getValue());
 							merge = true;
 						}
 
@@ -266,10 +276,33 @@ public class My2048Screen extends MainScreen
 
 		if (merge) {
 			appendBlock();
-			//checkComplete();
+			checkComplete();
 		}
 
 		_mainFrame.invalidate();
+	}
+
+	private void checkComplete()
+	{
+		boolean complete = true;
+
+ALL:
+		for (int y=0; y<4; y++)
+		{
+			for (int x=0; x<4; x++)
+			{
+				if (_block[x][y].getValue() == 0 ||
+				   (x > 0 && _block[x][y].getValue() == _block[x-1][y].getValue()) ||
+				   (x < 3 && _block[x][y].getValue() == _block[x+1][y].getValue()) ||
+				   (y > 0 && _block[x][y].getValue() == _block[x][y-1].getValue()) ||
+				   (y < 3 && _block[x][y].getValue() == _block[x][y+1].getValue())) {
+						complete = false;
+						break ALL;
+				}
+			}
+		}
+
+		if (complete) {Function.errorDialog("游戏结束");	}
 	}
 
 	protected boolean keyChar(char key, int status, int time)
