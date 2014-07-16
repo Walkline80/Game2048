@@ -1,5 +1,6 @@
 package com.walkline.util.ui;
 
+import net.rim.device.api.system.Bitmap;
 import net.rim.device.api.system.Display;
 import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.Font;
@@ -39,7 +40,7 @@ public class BlockField extends Field
 		} catch (ClassNotFoundException e) {}
 	}
 
-	public void clear()
+	public void Clear()
 	{
 		setValue(0);
 		invalidate();
@@ -57,6 +58,17 @@ public class BlockField extends Field
 		_animation_size = getWidth() / 3;
 
 		setBackgroundColor();
+	}
+
+	public Bitmap getBitmap()
+	{
+		Bitmap bitmap = new Bitmap(getWidth(), getHeight());
+		Graphics g = Graphics.create(bitmap);
+
+		g.setColor(_background_color);
+		g.fillRoundRect(0, 0, getWidth(), getHeight(), CORNER_RADIUS, CORNER_RADIUS);
+
+		return bitmap;
 	}
 
 	public void setBackgroundColor()
@@ -130,6 +142,8 @@ public class BlockField extends Field
 
 	public synchronized void doPaint() {this.invalidate();}
 
+	public boolean equals(BlockField block) {return (getValue() == block.getValue());}
+
 	protected void layout(int width, int height) {setExtent(width, height);}
 
 	protected void paint(Graphics g)
@@ -147,7 +161,7 @@ public class BlockField extends Field
 		{
 			g.fillRoundRect((getWidth() - _animation_size) / 2, (getHeight() - _animation_size) / 2, _animation_size, _animation_size, CORNER_RADIUS, CORNER_RADIUS);
 		} else {
-			g.fillRoundRect(0, 0, getWidth(), getHeight(), CORNER_RADIUS, CORNER_RADIUS);						
+			g.fillRoundRect(0, 0, getWidth(), getHeight(), CORNER_RADIUS, CORNER_RADIUS);
 		}
 	}
 }

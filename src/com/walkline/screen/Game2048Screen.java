@@ -6,30 +6,34 @@ import net.rim.device.api.system.Characters;
 import net.rim.device.api.system.Display;
 import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.TouchEvent;
-import net.rim.device.api.ui.TouchGesture;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.container.HorizontalFieldManager;
 import net.rim.device.api.ui.container.MainScreen;
 import net.rim.device.api.ui.container.VerticalFieldManager;
 
+import com.walkline.app.Game2048AppConfig;
 import com.walkline.util.Function;
 import com.walkline.util.ui.BlockField;
 import com.walkline.util.ui.BlockFieldManager;
 import com.walkline.util.ui.ForegroundManager;
 import com.walkline.util.ui.ScoreboardFieldManager;
 
-public class My2048Screen extends MainScreen
+public class Game2048Screen extends MainScreen
 {
 	private boolean IS_WIDTH_SCREEN = Display.getWidth() > Display.getHeight() ? true : false;
 
+	private int LINES = Game2048AppConfig.LINES;
 	private ForegroundManager _foreground = new ForegroundManager(0);
-	private BlockField[][] _block = new BlockField[4][4];
+	private BlockField[][] _block = new BlockField[LINES][LINES];
 	private BlockFieldManager _mainFrame;
 	private ScoreboardFieldManager _scoreBoard;
-
 	private static int _lastMovementTime = 0;
+	private static float _startX;
+	private static float _startY;
+	private static float _offsetX;
+	private static float _offsetY;
 
-    public My2048Screen()
+    public Game2048Screen()
     {
     	super(NO_HORIZONTAL_SCROLL | NO_VERTICAL_SCROLL | NO_SYSTEM_MENU_ITEMS);
 
@@ -50,14 +54,14 @@ public class My2048Screen extends MainScreen
     		_foreground.add(vfm);
     	}
 
-        for (int x=0; x<4; x++)
+        for (int x=0; x<LINES; x++)
         {
-        	for (int y=0; y<4; y++)
+        	for (int y=0; y<LINES; y++)
         	{
             	_block[x][y] = new BlockField();
             	_block[x][y].setAnimationMode(false);
             	//_block[i][j].setValue(0);
-            	_block[x][y].clear();
+            	_block[x][y].Clear();
             	_mainFrame.add(_block[x][y]);
         	}
         }
@@ -74,12 +78,12 @@ public class My2048Screen extends MainScreen
     {
     	_scoreBoard.clear();
 
-    	for (int x=0; x<4; x++)
+    	for (int x=0; x<LINES; x++)
     	{
-    		for (int y=0; y<4; y++)
+    		for (int y=0; y<LINES; y++)
     		{
     			_block[x][y].setAnimationMode(false);
-    			_block[x][y].clear();
+    			_block[x][y].Clear();
     		}
     	}
 
@@ -97,8 +101,8 @@ public class My2048Screen extends MainScreen
 
 		while (!found)
 		{
-			x = new Random(System.currentTimeMillis() * System.currentTimeMillis()).nextInt(4);
-			y = new Random(System.currentTimeMillis() * System.currentTimeMillis()).nextInt(4);
+			x = new Random(System.currentTimeMillis() * System.currentTimeMillis()).nextInt(LINES);
+			y = new Random(System.currentTimeMillis() * System.currentTimeMillis()).nextInt(LINES);
 
 			if (_block[x][y].getValue() == 0)
 			{
@@ -122,29 +126,29 @@ public class My2048Screen extends MainScreen
 	{
 		boolean merge = false;
 
-		for (int y=0; y<4; y++)
+		for (int y=0; y<LINES; y++)
 		{
-			for (int x=0; x<4; x++)
+			for (int x=0; x<LINES; x++)
 			{
-				for (int x1=x+1; x1<4; x1++)
+				for (int x1=x+1; x1<LINES; x1++)
 				{
 					if (_block[x1][y].getValue() > 0)
 					{
 						if (_block[x][y].getValue() <= 0)
 						{
 							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x1][y],_block[x][y], x1, x, y, y);
+							_mainFrame.startMoveAnimation(_block[x1][y], _block[x][y], _block[x1][y].getTop() , _block[x][y].getTop(), _block[x1][y].getLeft(), _block[x][y].getLeft());
 							_block[x][y].setValue(_block[x1][y].getValue());
 							_block[x1][y].setValue(0);
 
 							x--;
 							merge = true;
-						}else if (_block[x][y].getValue() == _block[x1][y].getValue())
-						{
+						//}else if (_block[x][y].getValue() == _block[x1][y].getValue())
+						} else if (_block[x][y].equals(_block[x1][y])) {
 							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x1][y], _block[x][y],x1, x, y, y);
 							_block[x][y].setValue(_block[x][y].getValue() * 2);
 							_block[x][y].setAnimationMode(true);
 							_block[x][y].startAnimation();
-
 							_block[x1][y].setValue(0);
 
 							updateScore(_block[x][y].getValue());
@@ -169,9 +173,9 @@ public class My2048Screen extends MainScreen
 	{
 		boolean merge = false;
 
-		for (int y=0; y<4; y++)
+		for (int y=0; y<LINES; y++)
 		{
-			for (int x=3; x>=0; x--)
+			for (int x=LINES-1; x>=0; x--)
 			{
 				for (int x1=x-1; x1>=0; x1--)
 				{
@@ -180,18 +184,18 @@ public class My2048Screen extends MainScreen
 						if (_block[x][y].getValue() <= 0)
 						{
 							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x1][y], _block[x][y],x1, x, y, y);
+							_mainFrame.startMoveAnimation(_block[x1][y], _block[x][y], _block[x1][y].getTop() , _block[x][y].getTop(), _block[x1][y].getLeft(), _block[x][y].getLeft());
 							_block[x][y].setValue(_block[x1][y].getValue());
 							_block[x1][y].setValue(0);
 
 							x++;
 							merge = true;
-						}else if (_block[x][y].getValue() == _block[x1][y].getValue())
-						{
+						//} else if (_block[x][y].getValue() == _block[x1][y].getValue())
+						} else if (_block[x][y].equals(_block[x1][y])) {
 							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x1][y], _block[x][y],x1, x, y, y);
 							_block[x][y].setValue(_block[x][y].getValue() * 2);
 							_block[x][y].setAnimationMode(true);
 							_block[x][y].startAnimation();
-
 							_block[x1][y].setValue(0);
 
 							updateScore(_block[x][y].getValue());
@@ -216,11 +220,11 @@ public class My2048Screen extends MainScreen
 	{
 		boolean merge = false;
 
-		for (int x=0; x<4; x++)
+		for (int x=0; x<LINES; x++)
 		{
-			for (int y=0; y<4; y++)
+			for (int y=0; y<LINES; y++)
 			{
-				for (int y1=y+1; y1<4; y1++)
+				for (int y1=y+1; y1<LINES; y1++)
 				{
 					if (_block[x][y1].getValue() > 0)
 					{
@@ -232,12 +236,12 @@ public class My2048Screen extends MainScreen
 
 							y--;
 							merge = true;
-						} else if (_block[x][y].getValue() == _block[x][y1].getValue()) {
+						//} else if (_block[x][y].getValue() == _block[x][y1].getValue()) {
+						} else if (_block[x][y].equals(_block[x][y1])) {
 							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x][y1],_block[x][y], x, x, y1, y);
 							_block[x][y].setValue(_block[x][y].getValue() * 2);
 							_block[x][y].setAnimationMode(true);
 							_block[x][y].startAnimation();
-
 							_block[x][y1].setValue(0);
 
 							updateScore(_block[x][y].getValue());
@@ -262,9 +266,9 @@ public class My2048Screen extends MainScreen
 	{
 		boolean merge = false;
 
-		for (int x=0; x<4; x++)
+		for (int x=0; x<LINES; x++)
 		{
-			for (int y=3; y>=0; y--)
+			for (int y=LINES-1; y>=0; y--)
 			{
 				for (int y1=y-1; y1>=0; y1--)
 				{
@@ -278,13 +282,12 @@ public class My2048Screen extends MainScreen
 
 							y++;
 							merge = true;
-						}else if (_block[x][y].getValue() == _block[x][y1].getValue())
-						{
+						//} else if (_block[x][y].getValue() == _block[x][y1].getValue()) {
+						} else if (_block[x][y].equals(_block[x][y1])) {
 							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x][y1],_block[x][y], x, x, y1, y);
 							_block[x][y].setValue(_block[x][y].getValue() * 2);
 							_block[x][y].setAnimationMode(true);
 							_block[x][y].startAnimation();
-
 							_block[x][y1].setValue(0);
 
 							updateScore(_block[x][y].getValue());
@@ -310,9 +313,9 @@ public class My2048Screen extends MainScreen
 		boolean complete = true;
 
 ALL:
-		for (int y=0; y<4; y++)
+		for (int y=0; y<LINES; y++)
 		{
-			for (int x=0; x<4; x++)
+			for (int x=0; x<LINES; x++)
 			{
 				if (_block[x][y].getValue() == 0 ||
 				   (x > 0 && _block[x][y].getValue() == _block[x-1][y].getValue()) ||
@@ -416,6 +419,32 @@ ALL:
 
     	switch (event)
     	{
+    		case TouchEvent.DOWN:
+    			_startX = message.getX(1);
+    			_startY = message.getY(1);
+    			break;
+    		case TouchEvent.UP:
+    			_offsetX = message.getX(1) - _startX;
+    			_offsetY = message.getY(1) - _startY;
+
+    			if (Math.abs(_offsetX) > Math.abs(_offsetY))
+    			{
+    				if (_offsetX < -5)
+    				{
+    					moveBlockLeft();
+    				} else if (_offsetX > 5) {
+    					moveBlockRight();
+    				}
+    			} else {
+    				if (_offsetY < -5)
+    				{
+    					moveBlockUp();
+    				} else if (_offsetY > 5) {
+    					moveBlockDown();
+    				}
+    			}
+    			break;
+    		/*
 			case TouchEvent.GESTURE:
 				TouchGesture gesture = message.getGesture();
 				int gestureEvent = gesture.getEvent();
@@ -443,8 +472,9 @@ ALL:
 						break;
 				}
 			break;
+			*/
 		}
 
-    	return super.touchEvent(message);
+    	return true; //super.touchEvent(message);
     }
 }

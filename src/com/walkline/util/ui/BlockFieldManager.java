@@ -1,9 +1,13 @@
 package com.walkline.util.ui;
 
+import com.walkline.app.Game2048AppConfig;
+
+import net.rim.device.api.system.Bitmap;
 import net.rim.device.api.system.Display;
 import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.Graphics;
 import net.rim.device.api.ui.Manager;
+import net.rim.device.api.ui.UiApplication;
 
 public class BlockFieldManager extends Manager
 {
@@ -11,6 +15,18 @@ public class BlockFieldManager extends Manager
 	private static final int CORNER_RADIUS = 16;
 	private static final int PADDING = 10;
 	private static final int SPACER = 12;
+	private static final int LINES = Game2048AppConfig.LINES;
+
+	private boolean _need_animation = false;
+	private Bitmap _bitmap;
+	private int _fromX = 0;
+	private int _fromY = 0;
+	private int _toX = 0;
+	private int _toY = 0;
+	private int _currentX = 0;
+	private int _currentY = 0;
+	private int _width = 0;
+	private int _height = 0;
 
 	public BlockFieldManager(long style)
 	{
@@ -32,6 +48,61 @@ public class BlockFieldManager extends Manager
 		return count;
 	}
 
+	public synchronized void startMoveAnimation(BlockField fromBlock, BlockField toBlock, int fromX, int toX, int fromY, int toY)
+	{
+		_need_animation = true;
+		_bitmap = fromBlock.getBitmap();
+		_fromX = fromX;
+		_fromY = fromY;
+		_toX = toX;
+		_toY = toY;
+
+		new Thread()
+		{
+			public void run()
+			{
+				if (_fromX == _toX)
+				{
+					
+				} else if (_fromY == _toY) {
+					_currentX = _fromX;
+					_currentY = _fromY;
+
+					if (_fromY > _toY)
+					{
+						while (_currentY > _toY)
+						{
+							try {
+			                	Thread.sleep(100);
+
+								_currentY -= 10;
+								if (_currentY < _toY) {_currentY = _toY;}
+
+								synchronized (UiApplication.getEventLock()) {doPaint();}
+							} catch (InterruptedException e) {}
+						}
+					} else if (_fromY < _toY) {
+						while (_currentY < _toY)
+						{
+							try {
+			                	Thread.sleep(100);
+
+								_currentY += 10;
+								if (_currentY > _toY) {_currentY = _toY;}
+
+								synchronized (UiApplication.getEventLock()) {doPaint();}
+							} catch (InterruptedException e) {}
+						}
+					}
+				}
+
+				_need_animation = false;
+			}
+		}.start();
+	}
+
+	private void doPaint() {this.invalidate();}
+
 	public int getPreferredWidth() {return Math.min(Display.getWidth(), Display.getHeight());}
 
 	public int getPreferredHeight() {return Math.min(Display.getWidth(), Display.getHeight());}
@@ -42,21 +113,21 @@ public class BlockFieldManager extends Manager
 
 		int currentX = 0;
 		int currentY = 0;
-		int usedWidth = getPreferredWidth() - getPaddingLeft() - getPaddingRight() - 5 * SPACER;
-		int usedHeight = getPreferredWidth() - getPaddingTop() - getPaddingBottom() - 5 * SPACER;
-		int fieldWidth = usedWidth / 4;
-		int fieldHeight = usedHeight / 4;
-		int unUsedWidth = usedWidth - fieldWidth * 4;
-		int unUsedHeight = usedHeight - fieldHeight * 4;
+		int usedWidth = getPreferredWidth() - getPaddingLeft() - getPaddingRight() - (LINES + 1) * SPACER;
+		int usedHeight = getPreferredWidth() - getPaddingTop() - getPaddingBottom() - (LINES + 1) * SPACER;
+		int fieldWidth = usedWidth / LINES;
+		int fieldHeight = usedHeight / LINES;
+		int unUsedWidth = usedWidth - fieldWidth * LINES;
+		int unUsedHeight = usedHeight - fieldHeight * LINES;
 		Field child;
 
-		for (int row=1; row<=4; row++)
+		for (int row=1; row<=LINES; row++)
 		{
-			for (int colum=1; colum<=4; colum++)
+			for (int colum=1; colum<=LINES; colum++)
 			{
 				currentX = colum * SPACER + (colum - 1) * fieldWidth;
 				currentY = row * SPACER + (row - 1) * fieldHeight;
-				child = getField(colum + (row-1) * 4 - 1);
+				child = getField(colum + (row-1) * LINES - 1);
 
 				layoutChild(child, fieldWidth, fieldHeight);
 				setPositionChild(child, currentX, currentY);
@@ -71,6 +142,12 @@ public class BlockFieldManager extends Manager
 		g.setColor(BACKGROUND_COLOR);
 		g.fillRoundRect(0, 0, getWidth() - getPaddingLeft() - getPaddingRight(), getHeight() - getPaddingTop() - getPaddingBottom(), CORNER_RADIUS, CORNER_RADIUS);
 
-		super.paint(g);
+		if (!_need_animation)
+		{
+			super.paint(g);
+		} else {
+			g.drawBitmap(_currentX, _currentY, _bitmap.getWidth(), _bitmap.getHeight(), _bitmap, 0, 0);
+			super.paint(g);
+		}
 	}
 }
