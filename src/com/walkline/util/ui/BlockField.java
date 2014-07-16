@@ -8,19 +8,17 @@ import net.rim.device.api.ui.Graphics;
 import net.rim.device.api.ui.Ui;
 import net.rim.device.api.ui.UiApplication;
 
-import com.walkline.util.Function;
-
 public class BlockField extends Field
 {
 	private static Font _font;
 	private static final int CORNER_RADIUS = 12;
 
-	private Object LOCK = new Object();
 	private int _value = 0;
 	private int _fore_color = 0;
 	private int _background_color = 0;
 	private String _text = "";
 	private int _animation_size = 0;
+	private boolean _need_animation = false;
 
 	public BlockField()
 	{
@@ -41,16 +39,23 @@ public class BlockField extends Field
 		} catch (ClassNotFoundException e) {}
 	}
 
-	public void clear() {setValue(0);}
+	public void clear()
+	{
+		setValue(0);
+		invalidate();
+	}
+
+	public void setAnimationMode(boolean value) {_need_animation = value;}
 
 	public int getValue() {return _value;}
 
 	public void setValue(int value)
 	{
 		_value = value;
-		_text = ((value != 0) ? String.valueOf(value) : ""); 
-
+		_text = ((_value != 0) ? String.valueOf(value) : ""); 
 		_fore_color = ((_value > 4) ? 0xf9f6f2 : 0x776e65);
+		_animation_size = getWidth() / 3;
+
 		setBackgroundColor();
 	}
 
@@ -100,35 +105,32 @@ public class BlockField extends Field
 		}
 	}
 
-	public synchronized void startRun()
+	public synchronized void startAnimation()
 	{
 		new Thread()
 		{
 			public void run()
 			{
-				while (_animation_size < getWidth());
+				while (_animation_size < getWidth())
 				{
-					synchronized (UiApplication.getEventLock())
-					{
-						invalidate();	
-					}
+					try {
+	                	Thread.sleep(10);
 
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {new Exception("thread exception: " + e.toString());}
+						_animation_size += 10;
+						if (_animation_size > getWidth()) {_animation_size = getWidth();}
 
-					_animation_size += 10;
-					if (_animation_size > getWidth()) {_animation_size = getWidth();}
+						synchronized (UiApplication.getEventLock()) {doPaint();}
+					} catch (InterruptedException e) {}
 				}
+
+				_need_animation = false;
 			}
 		}.start();
 	}
 
-	protected void layout(int width, int height)
-	{
-		_animation_size = width / 2;
-		setExtent(width, height);
-	}
+	public synchronized void doPaint() {this.invalidate();}
+
+	protected void layout(int width, int height) {setExtent(width, height);}
 
 	protected void paint(Graphics g)
 	{
@@ -140,8 +142,12 @@ public class BlockField extends Field
 	protected void paintBackground(Graphics g)
 	{
 		g.setColor(_background_color);
-		g.fillRoundRect((getWidth() - _animation_size) / 2, (getHeight() - _animation_size) / 2, _animation_size, _animation_size, CORNER_RADIUS, CORNER_RADIUS);
 
-		//g.fillRoundRect(0, 0, getWidth(), getHeight(), CORNER_RADIUS, CORNER_RADIUS);
+		if (_need_animation)
+		{
+			g.fillRoundRect((getWidth() - _animation_size) / 2, (getHeight() - _animation_size) / 2, _animation_size, _animation_size, CORNER_RADIUS, CORNER_RADIUS);
+		} else {
+			g.fillRoundRect(0, 0, getWidth(), getHeight(), CORNER_RADIUS, CORNER_RADIUS);						
+		}
 	}
 }

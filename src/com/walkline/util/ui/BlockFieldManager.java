@@ -7,7 +7,7 @@ import net.rim.device.api.ui.Manager;
 
 public class BlockFieldManager extends Manager
 {
-	private static final int _background_color = 0xbbada0;
+	private static final int BACKGROUND_COLOR = 0xbbada0;
 	private static final int CORNER_RADIUS = 16;
 	private static final int PADDING = 10;
 	private static final int SPACER = 12;
@@ -68,7 +68,7 @@ public class BlockFieldManager extends Manager
 
 	protected void paint(Graphics g)
 	{
-		g.setColor(_background_color);
+		g.setColor(BACKGROUND_COLOR);
 		g.fillRoundRect(0, 0, getWidth() - getPaddingLeft() - getPaddingRight(), getHeight() - getPaddingTop() - getPaddingBottom(), CORNER_RADIUS, CORNER_RADIUS);
 
 		super.paint(g);

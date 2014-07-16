@@ -47,12 +47,4 @@ public class AppTitleField extends Field
 		g.setFont(_font);
 		g.drawText(APP_TITLE, (getWidth() - _font.getAdvance(APP_TITLE)) / 2, (getHeight() - _font.getHeight()) / 2);
 	}
-
-	/*
-	protected void paintBackground(Graphics g)
-	{
-		g.setColor(BACKGROUND_COLOR);
-		g.fillRoundRect(0, 0, getWidth(), getHeight(), CORNER_RADIUS, CORNER_RADIUS);
-	}
-	*/
 }

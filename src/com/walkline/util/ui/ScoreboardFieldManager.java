@@ -17,7 +17,8 @@ public class ScoreboardFieldManager extends Manager
 		add(_score);
 		add(_best);
 
-		if (sytle == Field.FIELD_RIGHT) {
+		if (sytle == Field.FIELD_RIGHT)
+		{
 			setPadding(10, 10, 10, 0);
 		} else if (sytle == Field.FIELD_HCENTER) {
 			setPadding(10, 10, 0, 10);
@@ -27,7 +28,6 @@ public class ScoreboardFieldManager extends Manager
 	public void clear()
 	{
 		_score.clear();
-		//_best.clear();
 
 		invalidate();
 	}

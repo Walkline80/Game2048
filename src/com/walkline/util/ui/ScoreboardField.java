@@ -1,13 +1,10 @@
 package com.walkline.util.ui;
 
-import com.walkline.util.Function;
-
 import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.Font;
 import net.rim.device.api.ui.FontFamily;
 import net.rim.device.api.ui.Graphics;
 import net.rim.device.api.ui.Ui;
-import net.rim.device.api.ui.UiApplication;
 
 public class ScoreboardField extends Field
 {
@@ -15,9 +12,10 @@ public class ScoreboardField extends Field
 	private static final String SCORE = "SCORE";
 	private static final int TITLE_COLOR = 0xe5dacf;
 	private static final int SCORE_COLOR = 0xffffff;
+	private static final int CORNER_RADIUS = 16;
+
 	private static Font _title_font;
 	private static Font _score_font;
-	private static final int CORNER_RADIUS = 16;
 
 	public ScoreboardField()
 	{

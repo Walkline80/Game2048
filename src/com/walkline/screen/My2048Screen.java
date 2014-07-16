@@ -27,6 +27,8 @@ public class My2048Screen extends MainScreen
 	private BlockFieldManager _mainFrame;
 	private ScoreboardFieldManager _scoreBoard;
 
+	private static int _lastMovementTime = 0;
+
     public My2048Screen()
     {
     	super(NO_HORIZONTAL_SCROLL | NO_VERTICAL_SCROLL | NO_SYSTEM_MENU_ITEMS);
@@ -44,18 +46,19 @@ public class My2048Screen extends MainScreen
     		VerticalFieldManager vfm = new VerticalFieldManager(USE_ALL_WIDTH);
     		vfm.add(_scoreBoard);
     		vfm.add(_mainFrame);
-    		
 
     		_foreground.add(vfm);
     	}
 
-        for (int i=0; i<4; i++)
+        for (int x=0; x<4; x++)
         {
-        	for (int j=0; j<4; j++)
+        	for (int y=0; y<4; y++)
         	{
-            	_block[i][j] = new BlockField();
-            	_block[i][j].setValue(2);
-            	_mainFrame.add(_block[i][j]);
+            	_block[x][y] = new BlockField();
+            	_block[x][y].setAnimationMode(false);
+            	//_block[i][j].setValue(0);
+            	_block[x][y].clear();
+            	_mainFrame.add(_block[x][y]);
         	}
         }
 
@@ -73,9 +76,14 @@ public class My2048Screen extends MainScreen
 
     	for (int x=0; x<4; x++)
     	{
-    		for (int y=0; y<4; y++) {_block[x][y].clear();}
+    		for (int y=0; y<4; y++)
+    		{
+    			_block[x][y].setAnimationMode(false);
+    			_block[x][y].clear();
+    		}
     	}
 
+    	//_mainFrame.invalidate();
     	for (int i=0; i<2; i++) {appendBlock();}
     }
 
@@ -84,6 +92,8 @@ public class My2048Screen extends MainScreen
 		int x = 0;
 		int y = 0;
 		boolean found = false;
+
+		if (_mainFrame.DisplayCount() >= 16) {return;}
 
 		while (!found)
 		{
@@ -100,8 +110,8 @@ public class My2048Screen extends MainScreen
 				}
 
 				found = true;
-				_block[x][y].startRun();
-				//_mainFrame.invalidate();
+				_block[x][y].setAnimationMode(true);
+				_block[x][y].startAnimation();
 			}
 		}
 	}
@@ -132,6 +142,9 @@ public class My2048Screen extends MainScreen
 						{
 							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x1][y], _block[x][y],x1, x, y, y);
 							_block[x][y].setValue(_block[x][y].getValue() * 2);
+							_block[x][y].setAnimationMode(true);
+							_block[x][y].startAnimation();
+
 							_block[x1][y].setValue(0);
 
 							updateScore(_block[x][y].getValue());
@@ -176,6 +189,9 @@ public class My2048Screen extends MainScreen
 						{
 							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x1][y], _block[x][y],x1, x, y, y);
 							_block[x][y].setValue(_block[x][y].getValue() * 2);
+							_block[x][y].setAnimationMode(true);
+							_block[x][y].startAnimation();
+
 							_block[x1][y].setValue(0);
 
 							updateScore(_block[x][y].getValue());
@@ -219,6 +235,9 @@ public class My2048Screen extends MainScreen
 						} else if (_block[x][y].getValue() == _block[x][y1].getValue()) {
 							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x][y1],_block[x][y], x, x, y1, y);
 							_block[x][y].setValue(_block[x][y].getValue() * 2);
+							_block[x][y].setAnimationMode(true);
+							_block[x][y].startAnimation();
+
 							_block[x][y1].setValue(0);
 
 							updateScore(_block[x][y].getValue());
@@ -263,6 +282,9 @@ public class My2048Screen extends MainScreen
 						{
 							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x][y1],_block[x][y], x, x, y1, y);
 							_block[x][y].setValue(_block[x][y].getValue() * 2);
+							_block[x][y].setAnimationMode(true);
+							_block[x][y].startAnimation();
+
 							_block[x][y1].setValue(0);
 
 							updateScore(_block[x][y].getValue());
@@ -303,7 +325,13 @@ ALL:
 			}
 		}
 
-		if (complete) {Function.errorDialog("游戏结束");	}
+		if (complete)
+		{
+			UiApplication.getUiApplication().invokeLater(new Runnable()
+			{
+				public void run() {Function.errorDialog("游戏结束");}
+			});
+		}
 	}
 
 	protected boolean keyChar(char key, int status, int time)
@@ -334,6 +362,10 @@ ALL:
 			case Characters.LATIN_SMALL_LETTER_L:
 				moveBlockRight();
 				return true;
+			case Characters.LATIN_CAPITAL_LETTER_C:
+			case Characters.LATIN_SMALL_LETTER_C:
+				Function.errorDialog(_mainFrame.DisplayCount() + "");
+				return true;
 		}
 
 		return super.keyChar(key, status, time);
@@ -341,6 +373,35 @@ ALL:
 
     protected boolean navigationMovement(int dx, int dy, int status, int time)
     {
+    	if (Math.abs(dx) > Math.abs(dy))
+    	{
+    		if (time - _lastMovementTime > 500)
+    		{
+    			if (dx < 0)
+    			{
+    				moveBlockLeft();
+    			} else if (dx > 0) {
+    				moveBlockRight();
+    			}
+
+    			_lastMovementTime = time;
+    			return true;
+    		}
+    	} else {
+    		if (time - _lastMovementTime > 500)
+    		{
+    			if (dy < 0)
+    			{
+    				moveBlockUp();
+    			} else if (dy > 0) {
+    				moveBlockDown();
+    			}
+
+    			_lastMovementTime = time;
+    			return true;
+    		}
+    	}
+
     	return super.navigationMovement(dx, dy, status, time);
     }
 
