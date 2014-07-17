@@ -87,8 +87,9 @@ public class Game2048Screen extends MainScreen
     		}
     	}
 
-    	//_mainFrame.invalidate();
-    	for (int i=0; i<2; i++) {appendBlock();}
+    	_mainFrame.invalidate();
+    	appendBlock();
+    	appendBlock();
     }
 
 	private void appendBlock()
@@ -136,14 +137,22 @@ public class Game2048Screen extends MainScreen
 					{
 						if (_block[x][y].getValue() <= 0)
 						{
+							//final int newX1 = x1;
+							//final int newX = x;
+							//final int newY = y;
 							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x1][y],_block[x][y], x1, x, y, y);
-							_mainFrame.startMoveAnimation(_block[x1][y], _block[x][y], _block[x1][y].getTop() , _block[x][y].getTop(), _block[x1][y].getLeft(), _block[x][y].getLeft());
+							//UiApplication.getUiApplication().invokeAndWait(new Runnable()
+							//{
+							//	public void run() {
+							//		_mainFrame.startMoveAnimation(_block[newX1][newY], _block[newX][newY], _block[newX1][newY].getLeft(), _block[newX][newY].getLeft(), _block[newX1][newY].getTop(), _block[newX][newY].getTop());									
+							//	}
+							//});
+
 							_block[x][y].setValue(_block[x1][y].getValue());
 							_block[x1][y].setValue(0);
 
 							x--;
 							merge = true;
-						//}else if (_block[x][y].getValue() == _block[x1][y].getValue())
 						} else if (_block[x][y].equals(_block[x1][y])) {
 							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x1][y], _block[x][y],x1, x, y, y);
 							_block[x][y].setValue(_block[x][y].getValue() * 2);
@@ -184,13 +193,11 @@ public class Game2048Screen extends MainScreen
 						if (_block[x][y].getValue() <= 0)
 						{
 							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x1][y], _block[x][y],x1, x, y, y);
-							_mainFrame.startMoveAnimation(_block[x1][y], _block[x][y], _block[x1][y].getTop() , _block[x][y].getTop(), _block[x1][y].getLeft(), _block[x][y].getLeft());
 							_block[x][y].setValue(_block[x1][y].getValue());
 							_block[x1][y].setValue(0);
 
 							x++;
 							merge = true;
-						//} else if (_block[x][y].getValue() == _block[x1][y].getValue())
 						} else if (_block[x][y].equals(_block[x1][y])) {
 							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x1][y], _block[x][y],x1, x, y, y);
 							_block[x][y].setValue(_block[x][y].getValue() * 2);
@@ -236,7 +243,6 @@ public class Game2048Screen extends MainScreen
 
 							y--;
 							merge = true;
-						//} else if (_block[x][y].getValue() == _block[x][y1].getValue()) {
 						} else if (_block[x][y].equals(_block[x][y1])) {
 							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x][y1],_block[x][y], x, x, y1, y);
 							_block[x][y].setValue(_block[x][y].getValue() * 2);
@@ -282,7 +288,6 @@ public class Game2048Screen extends MainScreen
 
 							y++;
 							merge = true;
-						//} else if (_block[x][y].getValue() == _block[x][y1].getValue()) {
 						} else if (_block[x][y].equals(_block[x][y1])) {
 							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x][y1],_block[x][y], x, x, y1, y);
 							_block[x][y].setValue(_block[x][y].getValue() * 2);
@@ -318,10 +323,10 @@ ALL:
 			for (int x=0; x<LINES; x++)
 			{
 				if (_block[x][y].getValue() == 0 ||
-				   (x > 0 && _block[x][y].getValue() == _block[x-1][y].getValue()) ||
-				   (x < 3 && _block[x][y].getValue() == _block[x+1][y].getValue()) ||
-				   (y > 0 && _block[x][y].getValue() == _block[x][y-1].getValue()) ||
-				   (y < 3 && _block[x][y].getValue() == _block[x][y+1].getValue())) {
+				   (x > 0 && _block[x][y].equals(_block[x-1][y])) ||
+				   (x < 3 && _block[x][y].equals(_block[x+1][y])) ||
+				   (y > 0 && _block[x][y].equals(_block[x][y-1])) ||
+				   (y < 3 && _block[x][y].equals(_block[x][y+1]))) {
 						complete = false;
 						break ALL;
 				}
@@ -378,7 +383,7 @@ ALL:
     {
     	if (Math.abs(dx) > Math.abs(dy))
     	{
-    		if (time - _lastMovementTime > 500)
+    		if (time - _lastMovementTime > 300)
     		{
     			if (dx < 0)
     			{
@@ -391,7 +396,7 @@ ALL:
     			return true;
     		}
     	} else {
-    		if (time - _lastMovementTime > 500)
+    		if (time - _lastMovementTime > 300)
     		{
     			if (dy < 0)
     			{

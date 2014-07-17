@@ -25,8 +25,6 @@ public class BlockFieldManager extends Manager
 	private int _toY = 0;
 	private int _currentX = 0;
 	private int _currentY = 0;
-	private int _width = 0;
-	private int _height = 0;
 
 	public BlockFieldManager(long style)
 	{
@@ -57,48 +55,49 @@ public class BlockFieldManager extends Manager
 		_toX = toX;
 		_toY = toY;
 
-		new Thread()
+		new Thread(new TransitionRunnable()).start();
+	}
+
+	class TransitionRunnable implements Runnable
+	{
+		public void run()
 		{
-			public void run()
+			if (_fromX == _toX)
 			{
-				if (_fromX == _toX)
+				_currentX = _fromX;
+				_currentY = _fromY;
+
+				if (_fromY > _toY)
 				{
-					
-				} else if (_fromY == _toY) {
-					_currentX = _fromX;
-					_currentY = _fromY;
-
-					if (_fromY > _toY)
+					while (_currentY > _toY)
 					{
-						while (_currentY > _toY)
-						{
-							try {
-			                	Thread.sleep(100);
+						try {
+		                	Thread.sleep(100);
 
-								_currentY -= 10;
-								if (_currentY < _toY) {_currentY = _toY;}
+							_currentY -= 15;
+							if (_currentY < _toY) {_currentY = _toY;}
 
-								synchronized (UiApplication.getEventLock()) {doPaint();}
-							} catch (InterruptedException e) {}
-						}
-					} else if (_fromY < _toY) {
-						while (_currentY < _toY)
-						{
-							try {
-			                	Thread.sleep(100);
+							synchronized (UiApplication.getEventLock()) {doPaint();}
+						} catch (InterruptedException e) {}
+					}
+				} else if (_fromY < _toY) {
+					while (_currentY < _toY)
+					{
+						try {
+		                	Thread.sleep(100);
 
-								_currentY += 10;
-								if (_currentY > _toY) {_currentY = _toY;}
+							_currentY += 15;
+							if (_currentY > _toY) {_currentY = _toY;}
 
-								synchronized (UiApplication.getEventLock()) {doPaint();}
-							} catch (InterruptedException e) {}
-						}
+							synchronized (UiApplication.getEventLock()) {doPaint();}
+						} catch (InterruptedException e) {}
 					}
 				}
-
-				_need_animation = false;
+			} else if (_fromY == _toY) {
 			}
-		}.start();
+
+			_need_animation = false;
+		}
 	}
 
 	private void doPaint() {this.invalidate();}
@@ -146,8 +145,9 @@ public class BlockFieldManager extends Manager
 		{
 			super.paint(g);
 		} else {
-			g.drawBitmap(_currentX, _currentY, _bitmap.getWidth(), _bitmap.getHeight(), _bitmap, 0, 0);
 			super.paint(g);
+			g.drawBitmap(_currentX, _currentY, _bitmap.getWidth(), _bitmap.getHeight(), _bitmap, 0, 0);
+			
 		}
 	}
 }

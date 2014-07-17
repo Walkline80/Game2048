@@ -68,6 +68,10 @@ public class BlockField extends Field
 		g.setColor(_background_color);
 		g.fillRoundRect(0, 0, getWidth(), getHeight(), CORNER_RADIUS, CORNER_RADIUS);
 
+		g.setColor(_fore_color);
+		g.setFont(_font);
+		g.drawText(_text, (getWidth() - _font.getAdvance(_text)) / 2, (getHeight() - _font.getHeight()) / 2);
+
 		return bitmap;
 	}
 
