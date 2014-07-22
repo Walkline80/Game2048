@@ -6,7 +6,7 @@ public class ForegroundManager extends NegativeMarginVerticalFieldManager
 {
     public ForegroundManager(long style)
     {
-        super(USE_ALL_HEIGHT | USE_ALL_WIDTH| NO_VERTICAL_SCROLL | style);
+        super(USE_ALL_HEIGHT | NO_VERTICAL_SCROLL | style);
     }
 
     protected void paintBackground(Graphics g)

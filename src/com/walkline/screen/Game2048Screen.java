@@ -1,16 +1,19 @@
 package com.walkline.screen;
 
 import java.util.Random;
-
+import net.rim.device.api.system.Bitmap;
 import net.rim.device.api.system.Characters;
 import net.rim.device.api.system.Display;
 import net.rim.device.api.ui.Field;
+import net.rim.device.api.ui.MenuItem;
 import net.rim.device.api.ui.TouchEvent;
 import net.rim.device.api.ui.UiApplication;
+import net.rim.device.api.ui.component.Dialog;
+import net.rim.device.api.ui.component.Menu;
 import net.rim.device.api.ui.container.HorizontalFieldManager;
 import net.rim.device.api.ui.container.MainScreen;
 import net.rim.device.api.ui.container.VerticalFieldManager;
-
+import net.rim.device.api.util.StringProvider;
 import com.walkline.app.Game2048AppConfig;
 import com.walkline.util.Function;
 import com.walkline.util.ui.BlockField;
@@ -22,6 +25,7 @@ public class Game2048Screen extends MainScreen
 {
 	private boolean IS_WIDTH_SCREEN = Display.getWidth() > Display.getHeight() ? true : false;
 
+	private Game2048AppConfig _appConfig;
 	private int LINES = Game2048AppConfig.LINES;
 	private ForegroundManager _foreground = new ForegroundManager(0);
 	private BlockField[][] _block = new BlockField[LINES][LINES];
@@ -33,12 +37,14 @@ public class Game2048Screen extends MainScreen
 	private static float _offsetX;
 	private static float _offsetY;
 
-    public Game2048Screen()
+    public Game2048Screen(Game2048AppConfig appConfig)
     {
     	super(NO_HORIZONTAL_SCROLL | NO_VERTICAL_SCROLL | NO_SYSTEM_MENU_ITEMS);
 
+    	_appConfig = appConfig;
     	_mainFrame = new BlockFieldManager(IS_WIDTH_SCREEN ? Field.FIELD_LEFT : Field.FIELD_HCENTER);
     	_scoreBoard = new ScoreboardFieldManager(IS_WIDTH_SCREEN ? Field.FIELD_RIGHT : Field.FIELD_HCENTER);
+    	_scoreBoard.setBestScore(_appConfig.getBestScore());
 
     	if (IS_WIDTH_SCREEN)
     	{
@@ -50,7 +56,6 @@ public class Game2048Screen extends MainScreen
     		VerticalFieldManager vfm = new VerticalFieldManager(USE_ALL_WIDTH);
     		vfm.add(_scoreBoard);
     		vfm.add(_mainFrame);
-
     		_foreground.add(vfm);
     	}
 
@@ -335,17 +340,37 @@ ALL:
 
 		if (complete)
 		{
+			if (_scoreBoard.getBestScore() > _appConfig.getBestScore())
+			{
+				_appConfig.setBestScore(_scoreBoard.getBestScore());
+				_appConfig.save();
+			}
+
 			UiApplication.getUiApplication().invokeLater(new Runnable()
 			{
-				public void run() {Function.errorDialog("游戏结束");}
+				public void run() {showRestartDialog();}
 			});
 		}
+	}
+
+	private void showRestartDialog()
+	{
+		String[] choices = {"确定", "重新开始"};
+
+		Dialog restartDialog = new Dialog("游戏结束", choices, null, 1, Bitmap.getPredefinedBitmap(Bitmap.INFORMATION));
+
+		restartDialog.doModal();
+		if (restartDialog.getSelectedValue() == 1) {initGame();}
 	}
 
 	protected boolean keyChar(char key, int status, int time)
 	{
 		switch (key)
 		{
+			case Characters.LATIN_CAPITAL_LETTER_P:
+			case Characters.LATIN_SMALL_LETTER_P:
+				UiApplication.getUiApplication().pushScreen(new GameRankingScreen());
+				return true;
 			case Characters.LATIN_CAPITAL_LETTER_R:
 			case Characters.LATIN_SMALL_LETTER_R:
 				initGame();
@@ -481,5 +506,31 @@ ALL:
 		}
 
     	return true; //super.touchEvent(message);
+    }
+
+    MenuItem menuRestart = new MenuItem(new StringProvider("重新开始(R\u0332)"), 100, 10)
+    {
+    	public void run() {initGame();}
+    };
+
+    MenuItem menuRanking = new MenuItem(new StringProvider("排行榜(P\u0332)"), 100, 20)
+    {
+    	public void run() {UiApplication.getUiApplication().pushScreen(new GameRankingScreen());}
+    };
+
+    MenuItem menuUploadScore = new MenuItem(new StringProvider("上传分数"), 100, 30)
+    {
+    	public void run() {UiApplication.getUiApplication().pushScreen(new UploadScoreScreen(_appConfig));}
+    };
+
+    protected void makeMenu(Menu menu, int instance)
+    {
+    	menu.add(menuRestart);
+    	menu.addSeparator();
+    	menu.add(menuRanking);
+    	menu.addSeparator();
+    	menu.add(menuUploadScore);
+
+    	super.makeMenu(menu, instance);
     }
 }

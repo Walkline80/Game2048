@@ -32,6 +32,10 @@ public class ScoreboardFieldManager extends Manager
 		invalidate();
 	}
 
+	public void setBestScore(int value) {_best.setScore(value);}
+
+	public int getBestScore() {return _best.getScore();}
+
 	public void update(int value)
 	{
 		_score.update(value);
