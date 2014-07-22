@@ -1,6 +1,5 @@
 package com.walkline.util.ui;
 
-import net.rim.device.api.system.Bitmap;
 import net.rim.device.api.system.Characters;
 import net.rim.device.api.system.Display;
 import net.rim.device.api.system.KeypadListener;
@@ -30,8 +29,6 @@ public class ListStyleButtonField extends Field
     private static int COLOR_BACKGROUND_FOCUS = 0x186DEF;
 
     private static final boolean USING_LARGE_ICON = Display.getWidth()<640 ? false : true;
-    private Bitmap _iconStoryTitle;
-    private int _iconStoryTitleSize = 0;
     private MyLabelField _labelNickname;
     private MyLabelField _labelScore;
 

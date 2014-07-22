@@ -1,7 +1,8 @@
 package com.walkline.util.network;
 
 import net.rim.device.api.i18n.SimpleDateFormat;
-import org.json.me.JSONObject;
+
+import com.walkline.util.json.JSONObject;
 
 public class GameRankItem implements RankItem
 {

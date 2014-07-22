@@ -1,6 +1,7 @@
 package com.walkline.screen;
 
 import java.util.Random;
+
 import net.rim.device.api.system.Bitmap;
 import net.rim.device.api.system.Characters;
 import net.rim.device.api.system.Display;
@@ -13,7 +14,7 @@ import net.rim.device.api.ui.component.Menu;
 import net.rim.device.api.ui.container.HorizontalFieldManager;
 import net.rim.device.api.ui.container.MainScreen;
 import net.rim.device.api.ui.container.VerticalFieldManager;
-import net.rim.device.api.util.StringProvider;
+
 import com.walkline.app.Game2048AppConfig;
 import com.walkline.util.Function;
 import com.walkline.util.ui.BlockField;
@@ -508,17 +509,17 @@ ALL:
     	return true; //super.touchEvent(message);
     }
 
-    MenuItem menuRestart = new MenuItem(new StringProvider("重新开始(R\u0332)"), 100, 10)
+    MenuItem menuRestart = new MenuItem(new String("重新开始(R\u0332)"), 100, 10)
     {
     	public void run() {initGame();}
     };
 
-    MenuItem menuRanking = new MenuItem(new StringProvider("排行榜(P\u0332)"), 100, 20)
+    MenuItem menuRanking = new MenuItem(new String("排行榜(P\u0332)"), 100, 20)
     {
     	public void run() {UiApplication.getUiApplication().pushScreen(new GameRankingScreen());}
     };
 
-    MenuItem menuUploadScore = new MenuItem(new StringProvider("上传分数"), 100, 30)
+    MenuItem menuUploadScore = new MenuItem(new String("上传分数"), 100, 30)
     {
     	public void run() {UiApplication.getUiApplication().pushScreen(new UploadScoreScreen(_appConfig));}
     };

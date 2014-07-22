@@ -18,7 +18,7 @@ public class Game2048AppConfig
 {
 	public static final int LINES = 4;
 
-	public static final Border border_popup_Transparent=BorderFactory.createRoundedBorder(new XYEdges(16,16,16,16), Color.BLACK, 200, Border.STYLE_FILLED);
+	public static final Border border_popup_Transparent=BorderFactory.createRoundedBorder(new XYEdges(16,16,16,16), Color.BLACK, Border.STYLE_TRANSPARENT);
 	public static final Background bg_popup_Transparent=BackgroundFactory.createSolidTransparentBackground(Color.BLACK, 200);
 
 	public static int[] preferredTransportTypes = {

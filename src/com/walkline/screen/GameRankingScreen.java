@@ -5,11 +5,9 @@ import java.util.Vector;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.container.MainScreen;
 
-import org.json.me.JSONObject;
-import org.json.me.JSONTokener;
-
 import com.walkline.app.Game2048AppConfig;
-import com.walkline.util.Function;
+import com.walkline.util.json.JSONObject;
+import com.walkline.util.json.JSONTokener;
 import com.walkline.util.network.GameRanking;
 import com.walkline.util.network.HttpClient;
 import com.walkline.util.network.MyConnectionFactory;

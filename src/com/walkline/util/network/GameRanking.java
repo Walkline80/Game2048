@@ -1,10 +1,11 @@
 package com.walkline.util.network;
 
 import java.util.Vector;
-import org.json.me.JSONArray;
-import org.json.me.JSONException;
-import org.json.me.JSONObject;
+
 import com.walkline.util.Function;
+import com.walkline.util.json.JSONArray;
+import com.walkline.util.json.JSONException;
+import com.walkline.util.json.JSONObject;
 
 public class GameRanking implements Ranking
 {
@@ -24,9 +25,9 @@ public class GameRanking implements Ranking
 				for (int i=0; i<rankingArray.length(); i++)
 				{
 					try {
-						JSONObject storyObject = (JSONObject) rankingArray.get(i);
+						JSONObject rankingObject = (JSONObject) rankingArray.get(i);
 
-						RankItem item = new GameRankItem(storyObject);
+						RankItem item = new GameRankItem(rankingObject);
 						if (item != null) {_ranking.addElement(item);}
 					} catch (JSONException e) {Function.errorDialog(e.toString());}
 				}
