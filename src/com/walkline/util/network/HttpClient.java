@@ -3,10 +3,13 @@ package com.walkline.util.network;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
+
 import javax.microedition.io.HttpConnection;
+
 import net.rim.device.api.io.transport.ConnectionDescriptor;
 import net.rim.device.api.io.transport.ConnectionFactory;
 import net.rim.device.api.io.transport.TransportInfo;
+
 import com.walkline.util.Function;
 
 public class HttpClient

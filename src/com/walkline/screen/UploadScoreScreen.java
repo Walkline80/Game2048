@@ -15,6 +15,7 @@ import net.rim.device.api.ui.container.HorizontalFieldManager;
 import net.rim.device.api.ui.container.PopupScreen;
 import net.rim.device.api.ui.container.VerticalFieldManager;
 import com.walkline.app.Game2048AppConfig;
+import com.walkline.util.Function;
 import com.walkline.util.network.HttpClient;
 import com.walkline.util.network.MyConnectionFactory;
 
@@ -50,7 +51,7 @@ public class UploadScoreScreen extends PopupScreen
 						Hashtable param = new Hashtable();
 
 						param.put("pin", Integer.toHexString(DeviceInfo.getDeviceId()).toUpperCase());
-						param.put("nickname", _blockField.getText());
+						param.put("nickname", Function.encode(_blockField.getText()));
 						param.put("device", "");
 						param.put("score", String.valueOf(_appConfig.getBestScore()));
 						param.put("action", "update");
