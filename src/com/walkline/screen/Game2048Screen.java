@@ -1,7 +1,8 @@
 package com.walkline.screen;
 
 import java.util.Random;
-
+import localization.Game2048Resource;
+import net.rim.device.api.i18n.ResourceBundle;
 import net.rim.device.api.system.Bitmap;
 import net.rim.device.api.system.Characters;
 import net.rim.device.api.system.Display;
@@ -14,7 +15,6 @@ import net.rim.device.api.ui.component.Menu;
 import net.rim.device.api.ui.container.HorizontalFieldManager;
 import net.rim.device.api.ui.container.MainScreen;
 import net.rim.device.api.ui.container.VerticalFieldManager;
-
 import com.walkline.app.Game2048AppConfig;
 import com.walkline.util.Function;
 import com.walkline.util.ui.BlockField;
@@ -22,10 +22,11 @@ import com.walkline.util.ui.BlockFieldManager;
 import com.walkline.util.ui.ForegroundManager;
 import com.walkline.util.ui.ScoreboardFieldManager;
 
-public class Game2048Screen extends MainScreen
+public class Game2048Screen extends MainScreen implements Game2048Resource
 {
 	private boolean IS_WIDTH_SCREEN = Display.getWidth() > Display.getHeight() ? true : false;
 
+	private static ResourceBundle _bundle = ResourceBundle.getBundle(BUNDLE_ID, BUNDLE_NAME);
 	private Game2048AppConfig _appConfig;
 	private int LINES = Game2048AppConfig.LINES;
 	private ForegroundManager _foreground = new ForegroundManager(0);
@@ -41,6 +42,7 @@ public class Game2048Screen extends MainScreen
     public Game2048Screen(Game2048AppConfig appConfig)
     {
     	super(NO_HORIZONTAL_SCROLL | NO_VERTICAL_SCROLL | NO_SYSTEM_MENU_ITEMS);
+    	setDefaultClose(false);
 
     	_appConfig = appConfig;
     	_mainFrame = new BlockFieldManager(IS_WIDTH_SCREEN ? Field.FIELD_LEFT : Field.FIELD_HCENTER);
@@ -66,7 +68,6 @@ public class Game2048Screen extends MainScreen
         	{
             	_block[x][y] = new BlockField();
             	_block[x][y].setAnimationMode(false);
-            	//_block[i][j].setValue(0);
             	_block[x][y].Clear();
             	_mainFrame.add(_block[x][y]);
         	}
@@ -143,24 +144,12 @@ public class Game2048Screen extends MainScreen
 					{
 						if (_block[x][y].getValue() <= 0)
 						{
-							//final int newX1 = x1;
-							//final int newX = x;
-							//final int newY = y;
-							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x1][y],_block[x][y], x1, x, y, y);
-							//UiApplication.getUiApplication().invokeAndWait(new Runnable()
-							//{
-							//	public void run() {
-							//		_mainFrame.startMoveAnimation(_block[newX1][newY], _block[newX][newY], _block[newX1][newY].getLeft(), _block[newX][newY].getLeft(), _block[newX1][newY].getTop(), _block[newX][newY].getTop());									
-							//	}
-							//});
-
 							_block[x][y].setValue(_block[x1][y].getValue());
 							_block[x1][y].setValue(0);
 
 							x--;
 							merge = true;
 						} else if (_block[x][y].equals(_block[x1][y])) {
-							//MainActivity.getMainActivity().getAnimLayer().createMoveAnim(_block[x1][y], _block[x][y],x1, x, y, y);
 							_block[x][y].setValue(_block[x][y].getValue() * 2);
 							_block[x][y].setAnimationMode(true);
 							_block[x][y].startAnimation();
@@ -356,20 +345,30 @@ ALL:
 
 	private void showRestartDialog()
 	{
-		String[] choices = {"确定", "重新开始"};
+		String[] choices = getResStringArray(DIALOG_CHOICES_OKRESTART);
 
-		Dialog restartDialog = new Dialog("游戏结束", choices, null, 1, Bitmap.getPredefinedBitmap(Bitmap.INFORMATION));
+		Dialog restartDialog = new Dialog(getResString(DIALOG_MESSAGE_GAMEOVER), choices, null, 1, Bitmap.getPredefinedBitmap(Bitmap.INFORMATION));
 
 		restartDialog.doModal();
 		if (restartDialog.getSelectedValue() == 1) {initGame();}
 	}
 
+	private String getResString(int key) {return _bundle.getString(key);}
+	private String[] getResStringArray(int key) {return _bundle.getStringArray(key);}
+
+    public boolean onClose()
+    {
+    	UiApplication.getUiApplication().requestBackground();
+
+    	return true;
+    }
+
 	protected boolean keyChar(char key, int status, int time)
 	{
 		switch (key)
 		{
-			case Characters.LATIN_CAPITAL_LETTER_P:
-			case Characters.LATIN_SMALL_LETTER_P:
+			case Characters.LATIN_CAPITAL_LETTER_L:
+			case Characters.LATIN_SMALL_LETTER_L:
 				UiApplication.getUiApplication().pushScreen(new GameRankingScreen());
 				return true;
 			case Characters.LATIN_CAPITAL_LETTER_R:
@@ -380,25 +379,13 @@ ALL:
 			case Characters.LATIN_SMALL_LETTER_A:
 				appendBlock();
 				return true;
-			case Characters.LATIN_CAPITAL_LETTER_I:
-			case Characters.LATIN_SMALL_LETTER_I:
-				moveBlockUp();
-				return true;
-			case Characters.LATIN_CAPITAL_LETTER_J:
-			case Characters.LATIN_SMALL_LETTER_J:
-				moveBlockLeft();
-				return true;
-			case Characters.LATIN_CAPITAL_LETTER_K:
-			case Characters.LATIN_SMALL_LETTER_K:
-				moveBlockDown();
-				return true;
-			case Characters.LATIN_CAPITAL_LETTER_L:
-			case Characters.LATIN_SMALL_LETTER_L:
-				moveBlockRight();
-				return true;
 			case Characters.LATIN_CAPITAL_LETTER_C:
 			case Characters.LATIN_SMALL_LETTER_C:
 				Function.errorDialog(_mainFrame.DisplayCount() + "");
+				return true;
+			case Characters.LATIN_CAPITAL_LETTER_Q:
+			case Characters.LATIN_SMALL_LETTER_Q:
+				System.exit(0);
 				return true;
 		}
 
@@ -475,53 +462,29 @@ ALL:
     				}
     			}
     			break;
-    		/*
-			case TouchEvent.GESTURE:
-				TouchGesture gesture = message.getGesture();
-				int gestureEvent = gesture.getEvent();
-
-				switch (gestureEvent)
-				{
-					case TouchGesture.SWIPE:
-						int gestureDirection = gesture.getSwipeDirection();
-
-						switch (gestureDirection)
-						{
-						case TouchGesture.SWIPE_NORTH:
-							moveBlockUp();
-							return true;
-						case TouchGesture.SWIPE_SOUTH:
-							moveBlockDown();
-							return true;
-						case TouchGesture.SWIPE_WEST:
-							moveBlockLeft();
-							return true;
-						case TouchGesture.SWIPE_EAST:
-							moveBlockRight();
-							return true;
-						}
-						break;
-				}
-			break;
-			*/
 		}
 
-    	return true; //super.touchEvent(message);
+    	return true;
     }
 
-    MenuItem menuRestart = new MenuItem(new String("重新开始(R\u0332)"), 100, 10)
+    MenuItem menuRestart = new MenuItem(_bundle, MENU_RESTART, 100, 10)
     {
     	public void run() {initGame();}
     };
 
-    MenuItem menuRanking = new MenuItem(new String("排行榜(P\u0332)"), 100, 20)
+    MenuItem menuRanking = new MenuItem(_bundle, MENU_RANKING, 100, 20)
     {
     	public void run() {UiApplication.getUiApplication().pushScreen(new GameRankingScreen());}
     };
 
-    MenuItem menuUploadScore = new MenuItem(new String("上传分数"), 100, 30)
+    MenuItem menuUploadScore = new MenuItem(_bundle, MENU_UPLOADSCORE, 100, 30)
     {
     	public void run() {UiApplication.getUiApplication().pushScreen(new UploadScoreScreen(_appConfig));}
+    };
+
+    MenuItem menuExit = new MenuItem(_bundle, MENU_EXIT, 100, 40)
+    {
+    	public void run() {System.exit(0);}
     };
 
     protected void makeMenu(Menu menu, int instance)
@@ -531,6 +494,8 @@ ALL:
     	menu.add(menuRanking);
     	menu.addSeparator();
     	menu.add(menuUploadScore);
+    	menu.addSeparator();
+    	menu.add(menuExit);
 
     	super.makeMenu(menu, instance);
     }

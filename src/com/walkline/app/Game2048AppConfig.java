@@ -33,8 +33,8 @@ public class Game2048AppConfig
 		TransportInfo.TRANSPORT_WAP
 	};
 
-	public static final String queryUpdateRecorderUrl = "http://walkline2048.jd-app.com/index.php"; // "http://walkline2048.sinaapp.com?action=update";
-	public static final String queryRankingRecordersUrl = "http://walkline2048.jd-app.com/index.php?action=query"; // "http://walkline2048.sinaapp.com?action=query";
+	public static final String queryUpdateRecorderUrl = "http://walkline2048.jd-app.com/index.php";
+	public static final String queryRankingRecordersUrl = "http://walkline2048.jd-app.com/index.php?action=query";
 
 	public static final Font FONT_LIST_NICKNAME = Font.getDefault().derive(Font.PLAIN, Font.getDefault().getHeight(Ui.UNITS_pt) + 3, Ui.UNITS_pt);
 	public static final Font FONT_LIST_SCORE = Font.getDefault().derive(Font.PLAIN, Font.getDefault().getHeight(Ui.UNITS_pt) + 2, Ui.UNITS_pt);
@@ -56,7 +56,7 @@ public class Game2048AppConfig
 
 		for (int i=0; i<_elements.capacity(); i++)
 		{
-			_elements.addElement(new Object()); //(""));
+			_elements.addElement(new Object());
 		}
 	}
 
@@ -122,4 +122,6 @@ public class Game2048AppConfig
 	{
 		_store = PersistentStore.getPersistentObject(0x4a8a7b69f292a404L); //blackberry_2048_written_by_Walkline_Wang
 	}
+
+	//SKU: 0xcdf7f4fe131aef6L (blackberry_2048_game_written_by_walkline_wang)
 }

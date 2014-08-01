@@ -2,6 +2,9 @@ package com.walkline.screen;
 
 import java.util.Vector;
 
+import localization.Game2048Resource;
+
+import net.rim.device.api.i18n.ResourceBundle;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.container.MainScreen;
 
@@ -17,17 +20,18 @@ import com.walkline.util.ui.ForegroundManager;
 import com.walkline.util.ui.ListStyleButtonField;
 import com.walkline.util.ui.ListStyleButtonSet;
 
-public class GameRankingScreen extends MainScreen
+public class GameRankingScreen extends MainScreen implements Game2048Resource
 {
+	private static ResourceBundle _bundle = ResourceBundle.getBundle(BUNDLE_ID, BUNDLE_NAME);
 	protected HttpClient _http;
 	private ForegroundManager _foregrond = new ForegroundManager(0);
 	private ListStyleButtonSet _rankingSet = new ListStyleButtonSet();
 
 	public GameRankingScreen()
 	{
-		super(NO_VERTICAL_SCROLL);
+		super(NO_VERTICAL_SCROLL | NO_SYSTEM_MENU_ITEMS);
 
-		setTitle("排行榜");
+		setTitle(getResString(SCREEN_TITLE_RANKING));
 
 		MyConnectionFactory cf = new MyConnectionFactory();
 
@@ -89,7 +93,7 @@ public class GameRankingScreen extends MainScreen
 
 		try
 		{
-			responseBuffer = _http.doGet(api); //.append("{\"total\":1,\"ranking\":[{\"nickname\":\"Jay\",\"score\":\"850\",\"last\":\"12233500832\"}]}");
+			responseBuffer = _http.doGet(api);
 
 			if ((responseBuffer == null) || (responseBuffer.length() <= 0))
 			{
@@ -105,4 +109,6 @@ public class GameRankingScreen extends MainScreen
 
 		return result;
 	}
+
+	private String getResString(int key) {return _bundle.getString(key);}
 }

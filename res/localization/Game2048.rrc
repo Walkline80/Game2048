@@ -1,0 +1,13 @@
+BUTTON_CANCEL#0="Cancel";
+BUTTON_OK#0="OK";
+DIALOG_CHOICES_OKRESTART#0={
+    "OK",
+    "Restart",
+};
+DIALOG_ENTERNAME#0="Please enter your nickname:";
+DIALOG_MESSAGE_GAMEOVER#0="Game Over";
+MENU_EXIT#0="Q\u0332uit";
+MENU_RANKING#0="Ranking L\u0332ist";
+MENU_RESTART#0="R\u0332estart";
+MENU_UPLOADSCORE#0="Upload Score";
+SCREEN_TITLE_RANKING#0="Ranking List";

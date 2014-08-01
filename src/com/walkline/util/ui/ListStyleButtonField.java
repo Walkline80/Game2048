@@ -28,7 +28,6 @@ public class ListStyleButtonField extends Field
     private static int COLOR_BORDER = 0xBBBBBB;
     private static int COLOR_BACKGROUND_FOCUS = 0x186DEF;
 
-    private static final boolean USING_LARGE_ICON = Display.getWidth()<640 ? false : true;
     private MyLabelField _labelNickname;
     private MyLabelField _labelScore;
 
