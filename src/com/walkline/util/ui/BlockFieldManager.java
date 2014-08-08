@@ -15,7 +15,7 @@ public class BlockFieldManager extends Manager
 	private static final int CORNER_RADIUS = 16;
 	private static final int PADDING = 10;
 	private static final int SPACER = 12;
-	private static final int LINES = Game2048AppConfig.LINES;
+	private static int LINES = Game2048AppConfig.LINES;
 
 	private boolean _need_animation = false;
 	private Bitmap _bitmap;
@@ -32,11 +32,13 @@ public class BlockFieldManager extends Manager
 		setPadding(PADDING, PADDING, PADDING, PADDING);
 	}
 
+	public void setLines(int value) {LINES = value;}
+
 	public int DisplayCount()
 	{
 		int count = 0;
 
-		for (int i=0; i<16; i++)
+		for (int i=0; i<LINES*LINES; i++)
 		{
 			BlockField block = (BlockField) getField(i);
 
@@ -108,7 +110,7 @@ public class BlockFieldManager extends Manager
 
 	protected void sublayout(int width, int height)
 	{
-		if (getFieldCount() != 16) {return;}
+		if (getFieldCount() != (LINES * LINES)) {return;}
 
 		int currentX = 0;
 		int currentY = 0;

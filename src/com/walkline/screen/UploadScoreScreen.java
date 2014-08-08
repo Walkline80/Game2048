@@ -1,9 +1,7 @@
 package com.walkline.screen;
 
 import java.util.Hashtable;
-
 import localization.Game2048Resource;
-
 import net.rim.device.api.i18n.ResourceBundle;
 import net.rim.device.api.system.ApplicationDescriptor;
 import net.rim.device.api.system.Characters;
@@ -19,14 +17,13 @@ import net.rim.device.api.ui.container.HorizontalFieldManager;
 import net.rim.device.api.ui.container.PopupScreen;
 import net.rim.device.api.ui.container.VerticalFieldManager;
 import com.walkline.app.Game2048AppConfig;
+import com.walkline.util.Enumerations.LoadingActions;
 import com.walkline.util.Function;
-import com.walkline.util.network.HttpClient;
-import com.walkline.util.network.MyConnectionFactory;
 
 public class UploadScoreScreen extends PopupScreen implements Game2048Resource
 {
 	private static ResourceBundle _bundle = ResourceBundle.getBundle(BUNDLE_ID, BUNDLE_NAME);
-	private HttpClient _http;
+
 	private Game2048AppConfig _appConfig;
 	private LabelField _labelTitle;
 	private EditField _blockField;
@@ -36,9 +33,6 @@ public class UploadScoreScreen extends PopupScreen implements Game2048Resource
 	{
 		super(new VerticalFieldManager());
 
-		MyConnectionFactory cf = new MyConnectionFactory();
-
-		_http = new HttpClient(cf);
 		_appConfig = appConfig;
 		_labelTitle = new LabelField(getResString(DIALOG_ENTERNAME), Field.FIELD_HCENTER);
 		_labelTitle.setMargin(0,  0, 5, 0);
@@ -65,9 +59,8 @@ public class UploadScoreScreen extends PopupScreen implements Game2048Resource
 
 						_appConfig.setNickname(_blockField.getText());
 						_appConfig.save();
-						try {
-							_http.doGet(Game2048AppConfig.queryUpdateRecorderUrl, param);
-						} catch (Exception e) {}
+
+						UiApplication.getUiApplication().pushModalScreen(new PleaseWaitScreen(param, LoadingActions.UPLOADSCORE));
 
 						close();
 					}

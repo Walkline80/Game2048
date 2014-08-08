@@ -17,6 +17,7 @@ import net.rim.device.api.ui.container.MainScreen;
 import net.rim.device.api.ui.container.VerticalFieldManager;
 import com.walkline.app.Game2048AppConfig;
 import com.walkline.util.Function;
+import com.walkline.util.Enumerations.GameModes;
 import com.walkline.util.ui.BlockField;
 import com.walkline.util.ui.BlockFieldManager;
 import com.walkline.util.ui.ForegroundManager;
@@ -105,7 +106,7 @@ public class Game2048Screen extends MainScreen implements Game2048Resource
 		int y = 0;
 		boolean found = false;
 
-		if (_mainFrame.DisplayCount() >= 16) {return;}
+		if (_mainFrame.DisplayCount() >= (LINES * LINES)) {return;}
 
 		while (!found)
 		{
@@ -319,9 +320,9 @@ ALL:
 			{
 				if (_block[x][y].getValue() == 0 ||
 				   (x > 0 && _block[x][y].equals(_block[x-1][y])) ||
-				   (x < 3 && _block[x][y].equals(_block[x+1][y])) ||
+				   (x < LINES - 1 && _block[x][y].equals(_block[x+1][y])) ||
 				   (y > 0 && _block[x][y].equals(_block[x][y-1])) ||
-				   (y < 3 && _block[x][y].equals(_block[x][y+1]))) {
+				   (y < LINES - 1 && _block[x][y].equals(_block[x][y+1]))) {
 						complete = false;
 						break ALL;
 				}
@@ -352,6 +353,36 @@ ALL:
 		restartDialog.doModal();
 		if (restartDialog.getSelectedValue() == 1) {initGame();}
 	}
+
+    private void showExitDialog()
+    {
+		String[] yesno = getResStringArray(DIALOG_CHOICES_YESNO);
+		Dialog showDialog = new Dialog(getResString(DIALOG_MESSAGE_QUIT), yesno, null, 1, Bitmap.getPredefinedBitmap(Bitmap.QUESTION), USE_ALL_WIDTH);
+
+		showDialog.doModal();
+		if (showDialog.getSelectedValue() == 0) {System.exit(0);}
+    }
+
+    private void showAllBlocks()
+    {
+    	_block[0][0].setAnimationMode(false);
+    	_block[0][0].Clear();
+    	_block[0][0].setValue(2);
+
+    	_block[0][1].setValue(4);
+    	_block[0][2].setValue(8);
+    	_block[0][3].setValue(16);
+    	_block[1][0].setValue(32);
+    	_block[1][1].setValue(64);
+    	_block[1][2].setValue(128);
+    	_block[1][3].setValue(256);
+    	_block[2][0].setValue(512);
+    	_block[2][1].setValue(1024);
+    	_block[2][2].setValue(2048);
+    	_block[2][3].setValue(4096);
+
+    	_mainFrame.invalidate();
+    }
 
 	private String getResString(int key) {return _bundle.getString(key);}
 	private String[] getResStringArray(int key) {return _bundle.getStringArray(key);}
@@ -385,7 +416,11 @@ ALL:
 				return true;
 			case Characters.LATIN_CAPITAL_LETTER_Q:
 			case Characters.LATIN_SMALL_LETTER_Q:
-				System.exit(0);
+				showExitDialog();
+				return true;
+			case Characters.LATIN_CAPITAL_LETTER_P:
+			case Characters.LATIN_SMALL_LETTER_P:
+				showAllBlocks();
 				return true;
 		}
 
@@ -482,9 +517,53 @@ ALL:
     	public void run() {UiApplication.getUiApplication().pushScreen(new UploadScoreScreen(_appConfig));}
     };
 
-    MenuItem menuExit = new MenuItem(_bundle, MENU_EXIT, 100, 40)
+    MenuItem menuChooseGameMode = new MenuItem(_bundle, MENU_GAMEMODE, 100, 40)
     {
-    	public void run() {System.exit(0);}
+		public void run()
+		{
+			ChooseGameModeScreen _uploadScreen = new ChooseGameModeScreen();
+			UiApplication.getUiApplication().pushModalScreen(_uploadScreen);
+
+			int selection = _uploadScreen.getSelection();
+
+			if (selection == -1) {return;}
+
+			switch (selection)
+			{
+				case GameModes.EASY:
+					LINES = 5;
+					break;
+				case GameModes.NORMAL:
+					LINES = 4;
+					break;
+				case GameModes.HARD:
+					LINES = 3;
+					break;
+			}
+
+			_mainFrame.deleteAll();
+			_mainFrame.setLines(LINES);
+			_scoreBoard.setGameMode(selection);
+			_block = new BlockField[LINES][LINES];
+
+			for (int x=0; x<LINES; x++)
+	        {
+	        	for (int y=0; y<LINES; y++)
+	        	{
+	            	_block[x][y] = new BlockField();
+	            	_block[x][y].setAnimationMode(false);
+	            	_block[x][y].Clear();
+	            	_mainFrame.add(_block[x][y]);
+	        	}
+	        }
+
+			initGame();
+		}
+	};
+
+    MenuItem menuExit = new MenuItem(_bundle, MENU_EXIT, 100, 50)
+    {
+    	public void run() {showExitDialog();}
     };
 
     protected void makeMenu(Menu menu, int instance)
@@ -493,6 +572,7 @@ ALL:
     	menu.addSeparator();
     	menu.add(menuRanking);
     	menu.addSeparator();
+    	menu.add(menuChooseGameMode);
     	menu.add(menuUploadScore);
     	menu.addSeparator();
     	menu.add(menuExit);

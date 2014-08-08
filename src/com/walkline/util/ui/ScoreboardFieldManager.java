@@ -1,5 +1,7 @@
 package com.walkline.util.ui;
 
+import com.walkline.util.Enumerations.GameModes;
+
 import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.Manager;
 
@@ -8,6 +10,7 @@ public class ScoreboardFieldManager extends Manager
 	private static final int PADDING = 10;
 	private ScoreboardField _score = new ScoreboardField();
 	private BestScoreboardField _best = new BestScoreboardField();
+	private int _gameMode = GameModes.NORMAL;
 
 	public ScoreboardFieldManager(long sytle)
 	{
@@ -32,6 +35,8 @@ public class ScoreboardFieldManager extends Manager
 		invalidate();
 	}
 
+	public void setGameMode(int value) {_gameMode = value;}
+
 	public void setBestScore(int value) {_best.setScore(value);}
 
 	public int getBestScore() {return _best.getScore();}
@@ -40,7 +45,13 @@ public class ScoreboardFieldManager extends Manager
 	{
 		_score.update(value);
 
-		if (_score.getScore() > _best.getScore()) {_best.setScore(_score.getScore());}
+		if (_gameMode == GameModes.NORMAL)
+		{
+			if (_score.getScore() > _best.getScore())
+			{
+				_best.setScore(_score.getScore());
+			}
+		}
 
 		invalidate();
 	}

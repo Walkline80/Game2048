@@ -4,9 +4,19 @@ DIALOG_CHOICES_OKRESTART#0={
     "OK",
     "Restart",
 };
+DIALOG_CHOICES_YESNO#0={
+    "Y\u0332es",
+    "N\u0332o",
+};
 DIALOG_ENTERNAME#0="Please enter your nickname:";
 DIALOG_MESSAGE_GAMEOVER#0="Game Over";
+DIALOG_MESSAGE_QUIT#0="Are you sure quit game?";
+GAME_MODE_EASY#0="E\u0332asy";
+GAME_MODE_HARD#0="H\u0332ard";
+GAME_MODE_NORMAL#0="N\u0332ormal";
+GAME_MODE_TITLE#0="Choose game mode";
 MENU_EXIT#0="Q\u0332uit";
+MENU_GAMEMODE#0="Game Mode";
 MENU_RANKING#0="Ranking L\u0332ist";
 MENU_RESTART#0="R\u0332estart";
 MENU_UPLOADSCORE#0="Upload Score";
