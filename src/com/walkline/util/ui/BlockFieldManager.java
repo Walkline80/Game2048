@@ -13,8 +13,8 @@ public class BlockFieldManager extends Manager
 {
 	private static final int BACKGROUND_COLOR = 0xbbada0;
 	private static final int CORNER_RADIUS = 16;
-	private static final int PADDING = 10;
-	private static final int SPACER = 12;
+	private static int PADDING = 14;
+	private static int SPACER = 6;
 	private static int LINES = Game2048AppConfig.LINES;
 
 	private boolean _need_animation = false;
@@ -32,7 +32,14 @@ public class BlockFieldManager extends Manager
 		setPadding(PADDING, PADDING, PADDING, PADDING);
 	}
 
-	public void setLines(int value) {LINES = value;}
+	public void setGameMode(int value)
+	{
+		int[] values = Game2048AppConfig.SETTINGS[value];
+
+		LINES = values[0];
+		PADDING = values[1];
+		SPACER = values[2];
+	}
 
 	public int DisplayCount()
 	{

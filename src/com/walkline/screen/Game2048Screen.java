@@ -63,23 +63,51 @@ public class Game2048Screen extends MainScreen implements Game2048Resource
     		_foreground.add(vfm);
     	}
 
-        for (int x=0; x<LINES; x++)
+        add(_foreground);
+
+        UiApplication.getUiApplication().invokeLater(new Runnable()
+        {
+			public void run() {startGame();}
+		});
+    }
+
+    private void startGame()
+    {
+    	ChooseGameModeScreen _uploadScreen = new ChooseGameModeScreen();
+		UiApplication.getUiApplication().pushModalScreen(_uploadScreen);
+
+		int selection = _uploadScreen.getSelection();
+
+		if (selection == -1) {showExitDialog();}
+
+		switch (selection)
+		{
+			case GameModes.EASY:
+				LINES = 5;
+				break;
+			case GameModes.NORMAL:
+				LINES = 4;
+				break;
+			case GameModes.HARD:
+				LINES = 3;
+				break;
+		}
+
+		_mainFrame.setGameMode(selection);
+		_scoreBoard.setGameMode(selection);
+		_block = new BlockField[LINES][LINES];
+		for (int x=0; x<LINES; x++)
         {
         	for (int y=0; y<LINES; y++)
         	{
-            	_block[x][y] = new BlockField();
+            	_block[x][y] = new BlockField(selection);
             	_block[x][y].setAnimationMode(false);
             	_block[x][y].Clear();
             	_mainFrame.add(_block[x][y]);
         	}
         }
 
-        add(_foreground);
-
-        UiApplication.getUiApplication().invokeLater(new Runnable()
-        {
-			public void run() {initGame();}
-		});
+		initGame();
     }
 
     private void initGame()
@@ -365,21 +393,17 @@ ALL:
 
     private void showAllBlocks()
     {
-    	_block[0][0].setAnimationMode(false);
-    	_block[0][0].Clear();
+    	//_block[0][0].setAnimationMode(false);
+    	//_block[0][0].Clear();
     	_block[0][0].setValue(2);
-
-    	_block[0][1].setValue(4);
-    	_block[0][2].setValue(8);
-    	_block[0][3].setValue(16);
-    	_block[1][0].setValue(32);
-    	_block[1][1].setValue(64);
-    	_block[1][2].setValue(128);
-    	_block[1][3].setValue(256);
-    	_block[2][0].setValue(512);
-    	_block[2][1].setValue(1024);
-    	_block[2][2].setValue(2048);
-    	_block[2][3].setValue(4096);
+    	_block[0][1].setValue(8192);
+    	_block[0][2].setValue(4096);
+    	_block[1][0].setValue(2048);
+    	_block[1][1].setValue(1024);
+    	_block[1][2].setValue(512);
+    	_block[2][0].setValue(256);
+    	_block[2][1].setValue(128);
+    	_block[2][2].setValue(64);
 
     	_mainFrame.invalidate();
     }
@@ -521,10 +545,10 @@ ALL:
     {
 		public void run()
 		{
-			ChooseGameModeScreen _uploadScreen = new ChooseGameModeScreen();
-			UiApplication.getUiApplication().pushModalScreen(_uploadScreen);
+			ChooseGameModeScreen popupScreen = new ChooseGameModeScreen();
+			UiApplication.getUiApplication().pushModalScreen(popupScreen);
 
-			int selection = _uploadScreen.getSelection();
+			int selection = popupScreen.getSelection();
 
 			if (selection == -1) {return;}
 
@@ -542,7 +566,7 @@ ALL:
 			}
 
 			_mainFrame.deleteAll();
-			_mainFrame.setLines(LINES);
+			_mainFrame.setGameMode(selection);
 			_scoreBoard.setGameMode(selection);
 			_block = new BlockField[LINES][LINES];
 
@@ -550,7 +574,7 @@ ALL:
 	        {
 	        	for (int y=0; y<LINES; y++)
 	        	{
-	            	_block[x][y] = new BlockField();
+	            	_block[x][y] = new BlockField(selection);
 	            	_block[x][y].setAnimationMode(false);
 	            	_block[x][y].Clear();
 	            	_mainFrame.add(_block[x][y]);

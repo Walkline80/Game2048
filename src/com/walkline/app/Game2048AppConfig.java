@@ -18,6 +18,8 @@ public class Game2048AppConfig
 {
 	public static final int LINES = 4;
 
+	public static final int[][] SETTINGS = {{5, 14, 6, 7}, {4, 14, 8, 9}, {3, 14, 10, 13}};
+
 	public static final Border border_popup_Transparent=BorderFactory.createRoundedBorder(new XYEdges(16,16,16,16), Color.BLACK, Border.STYLE_TRANSPARENT);
 	public static final Background bg_popup_Transparent=BackgroundFactory.createSolidTransparentBackground(Color.BLACK, 200);
 

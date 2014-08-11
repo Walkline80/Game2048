@@ -1,5 +1,7 @@
 package com.walkline.util.ui;
 
+import com.walkline.app.Game2048AppConfig;
+
 import net.rim.device.api.system.Bitmap;
 import net.rim.device.api.system.Display;
 import net.rim.device.api.ui.Field;
@@ -21,20 +23,22 @@ public class BlockField extends Field
 	private int _animation_size = 0;
 	private boolean _need_animation = false;
 
-	public BlockField()
+	public BlockField(int gameMode)
 	{
 		super(NON_FOCUSABLE);
 
 		try {
-			int fontSize = 7;
+			int[] values = Game2048AppConfig.SETTINGS[gameMode];
+			int fontSize = values[3];
+
 			FontFamily family = FontFamily.forName("Tahoma");
 
-			if (Display.getWidth() > Display.getHeight())
-			{
-				if (Display.getWidth() > 480) {fontSize = 9;}	
-			} else {
-				if (Display.getHeight() >= 480) {fontSize = 9;}
-			}
+			//if (Display.getWidth() > Display.getHeight())
+			//{
+			//	if (Display.getWidth() > 480) {fontSize = 9;}	
+			//} else {
+			//	if (Display.getHeight() >= 480) {fontSize = 9;}
+			//}
 
 			_font = family.getFont(Font.EXTRA_BOLD, fontSize, Ui.UNITS_pt);
 		} catch (ClassNotFoundException e) {}
@@ -117,6 +121,9 @@ public class BlockField extends Field
 				break;
 			case 4096:
 				_background_color = 0xff3c39;
+				break;
+			case 8192:
+				_background_color = 0xfe1b18;
 				break;
 		}
 	}

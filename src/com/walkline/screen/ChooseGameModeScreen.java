@@ -8,6 +8,7 @@ import net.rim.device.api.ui.FieldChangeListener;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.component.ButtonField;
 import net.rim.device.api.ui.component.LabelField;
+import net.rim.device.api.ui.component.NullField;
 import net.rim.device.api.ui.component.SeparatorField;
 import net.rim.device.api.ui.container.PopupScreen;
 import net.rim.device.api.ui.container.VerticalFieldManager;
@@ -21,6 +22,7 @@ public class ChooseGameModeScreen extends PopupScreen implements FieldChangeList
 	ButtonField _buttonModeEasy;
 	ButtonField _buttonModeNormal;
 	ButtonField _buttonModeHard;
+	ButtonField _buttonModeContinue;
 	
 	private int _result = -1;
 
@@ -36,11 +38,15 @@ public class ChooseGameModeScreen extends PopupScreen implements FieldChangeList
 		_buttonModeNormal.setChangeListener(this);
 		_buttonModeHard = new ButtonField(getResString(GAME_MODE_HARD), ButtonField.CONSUME_CLICK | ButtonField.NEVER_DIRTY);
 		_buttonModeHard.setChangeListener(this);
+		_buttonModeContinue = new ButtonField(getResString(GAME_MODE_CONTINUE), ButtonField.CONSUME_CLICK | ButtonField.NEVER_DIRTY);
+		_buttonModeContinue.setChangeListener(this);
 
 		VerticalButtonFieldSet vbf = new VerticalButtonFieldSet(USE_ALL_WIDTH);
 		vbf.add(_buttonModeEasy);
 		vbf.add(_buttonModeNormal);
 		vbf.add(_buttonModeHard);
+		vbf.add(new LabelField());
+		vbf.add(_buttonModeContinue);
 
 		add(headLine);
 		add(new SeparatorField());
@@ -100,6 +106,8 @@ public class ChooseGameModeScreen extends PopupScreen implements FieldChangeList
 				_result = GameModes.NORMAL;
 			} else if (field.equals(_buttonModeHard)) {
 				_result = GameModes.HARD;
+			} else if (field.equals(_buttonModeContinue)) {
+				_result = GameModes.CONTINUE;
 			}
 
 			onClose();
