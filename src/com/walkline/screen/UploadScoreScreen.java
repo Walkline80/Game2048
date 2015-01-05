@@ -1,6 +1,7 @@
 package com.walkline.screen;
 
 import java.util.Hashtable;
+
 import localization.Game2048Resource;
 import net.rim.device.api.i18n.ResourceBundle;
 import net.rim.device.api.system.ApplicationDescriptor;
@@ -16,6 +17,7 @@ import net.rim.device.api.ui.component.LabelField;
 import net.rim.device.api.ui.container.HorizontalFieldManager;
 import net.rim.device.api.ui.container.PopupScreen;
 import net.rim.device.api.ui.container.VerticalFieldManager;
+
 import com.walkline.app.Game2048AppConfig;
 import com.walkline.util.Enumerations.LoadingActions;
 import com.walkline.util.Function;
@@ -47,6 +49,17 @@ public class UploadScoreScreen extends PopupScreen implements Game2048Resource
 				{
 					public void run() 
 					{
+						String nickname = _blockField.getText();
+
+						if (nickname.trim().equals("") || nickname.length() <4)
+						{
+							Function.errorDialog(getResString(MESSAGE_UPLOAD_NICKNAME_NULL));
+
+							_blockField.setFocus();
+
+							return;
+						}
+
 						Hashtable param = new Hashtable();
 
 						param.put("pin", Integer.toHexString(DeviceInfo.getDeviceId()).toUpperCase());
@@ -60,7 +73,23 @@ public class UploadScoreScreen extends PopupScreen implements Game2048Resource
 						_appConfig.setNickname(_blockField.getText());
 						_appConfig.save();
 
-						UiApplication.getUiApplication().pushModalScreen(new PleaseWaitScreen(param, LoadingActions.UPLOADSCORE));
+						PleaseWaitScreen popupScreen = new PleaseWaitScreen(param, LoadingActions.UPLOADSCORE);
+						UiApplication.getUiApplication().pushModalScreen(popupScreen);
+
+						String result = popupScreen.getResult();
+
+						if (popupScreen != null) {popupScreen = null;}
+						if (!result.equals(""))
+						{
+							if (result.equalsIgnoreCase("ok"))
+							{
+								Function.errorDialog(getResString(MESSAGE_UPLOAD_OK));
+							} else if (result.equalsIgnoreCase("updated")) {
+								Function.errorDialog(getResString(MESSAGE_UPLOAD_UPDATED));
+							} else if (result.equalsIgnoreCase("blocked")) {
+								Function.errorDialog(getResString(MESSAGE_UPLOAD_BLOCKED));
+							}
+						}
 
 						close();
 					}

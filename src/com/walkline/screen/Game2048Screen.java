@@ -73,25 +73,27 @@ public class Game2048Screen extends MainScreen implements Game2048Resource
 
     private void startGame()
     {
-    	ChooseGameModeScreen _uploadScreen = new ChooseGameModeScreen();
-		UiApplication.getUiApplication().pushModalScreen(_uploadScreen);
+//    	ChooseGameModeScreen _uploadScreen = new ChooseGameModeScreen();
+//		UiApplication.getUiApplication().pushModalScreen(_uploadScreen);
+//
+//		int selection = _uploadScreen.getSelection();
+//
+//		if (selection == -1) {showExitDialog();}
+//
+//		switch (selection)
+//		{
+//			case GameModes.EASY:
+//				LINES = 5;
+//				break;
+//			case GameModes.NORMAL:
+//				LINES = 4;
+//				break;
+//			case GameModes.HARD:
+//				LINES = 3;
+//				break;
+//		}
 
-		int selection = _uploadScreen.getSelection();
-
-		if (selection == -1) {showExitDialog();}
-
-		switch (selection)
-		{
-			case GameModes.EASY:
-				LINES = 5;
-				break;
-			case GameModes.NORMAL:
-				LINES = 4;
-				break;
-			case GameModes.HARD:
-				LINES = 3;
-				break;
-		}
+    	int selection = GameModes.NORMAL;
 
 		_mainFrame.setGameMode(selection);
 		_scoreBoard.setGameMode(selection);
@@ -596,7 +598,7 @@ ALL:
     	menu.addSeparator();
     	menu.add(menuRanking);
     	menu.addSeparator();
-    	menu.add(menuChooseGameMode);
+    	//menu.add(menuChooseGameMode);
     	menu.add(menuUploadScore);
     	menu.addSeparator();
     	menu.add(menuExit);

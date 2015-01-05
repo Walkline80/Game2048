@@ -10,6 +10,7 @@ import net.rim.device.api.ui.container.PopupScreen;
 import net.rim.device.api.ui.container.VerticalFieldManager;
 import com.walkline.app.Game2048AppConfig;
 import com.walkline.util.Enumerations.LoadingActions;
+import com.walkline.util.Function;
 import com.walkline.util.json.JSONObject;
 import com.walkline.util.json.JSONTokener;
 import com.walkline.util.network.GameRanking;
@@ -24,6 +25,8 @@ public class PleaseWaitScreen extends PopupScreen
 	private HttpClient _http;
 	private Ranking _ranking;
 	private MyConnectionFactory cf = new MyConnectionFactory();
+
+	private String _result = "";
 
 	public PleaseWaitScreen(Hashtable param, int action)
 	{
@@ -52,13 +55,15 @@ public class PleaseWaitScreen extends PopupScreen
 		public void run()
 		{
 			try {
-				_http.doGet(Game2048AppConfig.queryUpdateRecorderUrl, _param);
+				StringBuffer result = _http.doGet(Game2048AppConfig.queryUpdateRecorderUrl, _param);
+				JSONObject jsonObject = new JSONObject(result.toString());
+				_result = jsonObject.optString("result");
 
 				Application.getApplication().invokeLater(new Runnable()
 				{
 					public void run() {onClose();}
 				});
-			} catch (Exception e) {}
+			} catch (Exception e) {Function.errorDialog(e.toString());}
 		}
 	}
 
@@ -76,6 +81,8 @@ public class PleaseWaitScreen extends PopupScreen
 	}
 
 	public Ranking getRankingList() {return _ranking;}
+
+	public String getResult() {return _result;}
 
 	private Ranking getRanking()
 	{
