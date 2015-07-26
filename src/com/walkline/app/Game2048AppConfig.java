@@ -35,8 +35,8 @@ public class Game2048AppConfig
 		TransportInfo.TRANSPORT_WAP
 	};
 
-	public static final String queryUpdateRecorderUrl = "http://walkline2048.jd-app.com/index.php";
-	public static final String queryRankingRecordersUrl = "http://walkline2048.jd-app.com/index.php?action=query";
+	public static final String queryUpdateRecorderUrl = "http://walkline.wang/2048/index.php";
+	public static final String queryRankingRecordersUrl = "http://walkline.wang/2048/index.php?action=query";
 
 	public static final Font FONT_LIST_NICKNAME = Font.getDefault().derive(Font.PLAIN, Font.getDefault().getHeight(Ui.UNITS_pt) + 3, Ui.UNITS_pt);
 	public static final Font FONT_LIST_SCORE = Font.getDefault().derive(Font.PLAIN, Font.getDefault().getHeight(Ui.UNITS_pt) + 2, Ui.UNITS_pt);
