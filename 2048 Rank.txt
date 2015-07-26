@@ -1,0 +1,51 @@
+1、上传分数
+
+Hashtable param = new Hashtable();
+
+//pin，唯一鉴别用户身份的证明
+param.put("pin", Integer.toHexString(DeviceInfo.getDeviceId()).toUpperCase());
+param.put("nickname", Function.encode(_blockField.getText()));
+param.put("device", DeviceInfo.getDeviceName());
+param.put("score", String.valueOf(_appConfig.getBestScore()));
+//action=update，上传/更新分数
+param.put("action", "update");
+//更新日期（毫秒）
+//java上传的是13位的，在server端显示的时候截取前10位并且时区+8
+param.put("last", String.valueOf(System.currentTimeMillis()));
+param.put("version", ApplicationDescriptor.currentApplicationDescriptor().getVersion());
+
+第一次上传成功会返回{"result": "ok"}，第二次（更新分数）上传成功会返回{"result": "updated"}，如果是被屏蔽的pin码就返回{"result": "blocked"}
+
+API：http://walkline2048.jd-app.com/index.php
+
+
+
+
+
+2、查询分数（app内排行榜）
+
+查询成功返回如下json数据
+
+{
+    "total": 2337,
+    "ranking": [
+        {
+            "nickname": "wahyudi nugroho",
+            "score": "290012",
+            "last": "1412765176518",
+            "version": "0.0.6",
+            "blocked": "0"
+        },
+        {
+            "nickname": "koko",
+            "score": "289012",
+            "last": "1416228800155",
+            "version": "0.0.6",
+            "blocked": "0"
+        }
+    ]
+}
+
+返回符合条件的前25条数据，屏蔽了 device=="" nickname=="" score<=0 blocked=="1" 的分数
+
+API：http://walkline2048.jd-app.com/index.php?action=query
